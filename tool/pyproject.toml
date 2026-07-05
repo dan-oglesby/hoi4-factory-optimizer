@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hoi4opt"
+version = "0.1.0"
+description = "Balanced HOI4 military-factory allocation for the divisions you want to train (mod-agnostic)."
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [{ name = "dan-oglesby" }]
+license = { text = "MIT" }
+dependencies = []  # standard library only, by design
+
+[project.scripts]
+hoi4opt = "hoi4opt.cli:main"
+
+[tool.setuptools]
+packages = ["hoi4opt"]
