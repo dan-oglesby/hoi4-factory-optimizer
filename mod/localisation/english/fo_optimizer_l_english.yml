@@ -1,0 +1,29 @@
+﻿l_english:
+ FO_OPTIMIZE_BUTTON:0 "Optimize"
+ FO_OPTIMIZE_TT:0 "§YFactory Optimizer§!
+Analyzes the equipment your armies (and training queue) still need, plus engine-computed truck/train supply needs, and assigns your FREE military factories to finite production lines sized to those deficits. Each line completes and releases its factories once its need is filled.
+
+Free military factories: §Y[?num_of_available_military_factories|0]§!
+
+Last plan (factories -> amount x equipment):
+$FO_PLAN_LINES$
+
+Excluded (design-based equipment, assign manually): §H$FO_EXCLUDED_LIST$§!
+
+§HNote: only free factories are used. Lines you created by hand are never touched.§!"
+ fo_optimizer_category:0 "Factory Optimizer"
+ fo_optimizer_category_desc:0 "Optimize military factory allocation toward the divisions you want to train, including logistics (trucks/trains)."
+ fo_optimize_now:0 "Optimize Production Now"
+ fo_optimize_now_desc:0 "Fallback for the production-screen button: computes equipment and logistics deficits and assigns free military factories to finite production lines.
+
+Free military factories: §Y[?num_of_available_military_factories|0]§!"
+ fo_debug_toggle:0 "Toggle Debug Tools"
+ fo_debug_toggle_desc:0 "Shows/hides the Factory Optimizer debug test decisions."
+ fo_debug_overrequest:0 "DEBUG: Over-request Factories (Test 2)"
+ fo_debug_overrequest_desc:0 "Creates an infantry equipment line with requested_factories = 50. With fewer than 50 free factories, check the created line: did it clamp to free factories, steal from existing lines, or stay pending?"
+ fo_debug_finite_line:0 "DEBUG: Finite Line (Test 4)"
+ fo_debug_finite_line_desc:0 "Creates an infantry equipment line with amount = 100 and 2 factories. When the 100 units finish, verify the line closes and the 2 factories become free again."
+ fo_debug_readouts:0 "DEBUG: Live Readouts (Test 3)"
+ fo_debug_readouts_desc:0 "LIVE VALUES - infantry_equipment target in armies: §Y[?num_target_equipment_in_armies@infantry_equipment|0]§!, in armies: §Y[?num_equipment_in_armies@infantry_equipment|0]§!, stockpile: §Y[?num_equipment@infantry_equipment|0]§!, free mil factories: §Y[?num_of_available_military_factories|0]§!
+Queue divisions in the recruit tab and watch whether the target number rises (Test 3: does target include the training queue?)."
+ fo_debug_readouts_tt:0 "Snapshotted: trucks have §Y[?fo_dbg_trucks_have|0]§! / need §Y[?fo_dbg_trucks_need|0]§!, trains have §Y[?fo_dbg_trains_have|0]§! / need §Y[?fo_dbg_trains_need|0]§!, inf target §Y[?fo_dbg_inf_target|0]§!, free mils §Y[?fo_dbg_free_mils|0]§!"

@@ -1,0 +1,108 @@
+# Factory Optimizer Companion - decisions.
+# fo_optimize_now mirrors the production-screen button (fallback trigger).
+# The fo_debug_* decisions are the in-game empirical tests from
+# docs/INGAME_BUTTON.md §7; toggle them on with "Toggle Debug Tools".
+fo_optimizer_category = {
+
+	fo_optimize_now = {
+		icon = generic_industry
+		cost = 0
+		days_re_enable = 7 # keep in sync with genmod --cooldown-days
+		fire_only_once = no
+		visible = { is_ai = no }
+		available = {
+			NOT = { has_country_flag = fo_cooldown }
+		}
+		ai_will_do = { factor = 0 }
+		complete_effect = {
+			fo_run_optimizer = yes
+		}
+	}
+
+	fo_debug_toggle = {
+		icon = generic_research
+		cost = 0
+		days_re_enable = 0
+		fire_only_once = no
+		visible = { is_ai = no }
+		ai_will_do = { factor = 0 }
+		complete_effect = {
+			if = {
+				limit = { has_country_flag = fo_debug }
+				clr_country_flag = fo_debug
+			}
+			else = {
+				set_country_flag = fo_debug
+			}
+		}
+	}
+
+	# TEST 2: does requested_factories clamp to free factories, steal from
+	# existing lines, or leave the request pending? Click with fewer than 50
+	# free factories and inspect the created line.
+	fo_debug_overrequest = {
+		icon = generic_research
+		cost = 0
+		days_re_enable = 1
+		fire_only_once = no
+		visible = {
+			is_ai = no
+			has_country_flag = fo_debug
+		}
+		ai_will_do = { factor = 0 }
+		complete_effect = {
+			add_equipment_production = {
+				equipment = { type = infantry_equipment_0 }
+				requested_factories = 50
+			}
+		}
+	}
+
+	# TEST 4: does a finite (amount = N) line release its factories when the
+	# run completes? Click, let the 100 units finish, watch the factories.
+	fo_debug_finite_line = {
+		icon = generic_research
+		cost = 0
+		days_re_enable = 1
+		fire_only_once = no
+		visible = {
+			is_ai = no
+			has_country_flag = fo_debug
+		}
+		ai_will_do = { factor = 0 }
+		complete_effect = {
+			add_equipment_production = {
+				equipment = { type = infantry_equipment_0 }
+				requested_factories = 2
+				amount = 100
+			}
+		}
+	}
+
+	# TEST 3: does num_target_equipment_in_armies include the training queue?
+	# The decision DESCRIPTION shows the live values - queue some divisions and
+	# watch the target number move (no need to click). Clicking snapshots the
+	# same values into variables for comparison.
+	fo_debug_readouts = {
+		icon = generic_research
+		cost = 0
+		days_re_enable = 0
+		fire_only_once = no
+		visible = {
+			is_ai = no
+			has_country_flag = fo_debug
+		}
+		ai_will_do = { factor = 0 }
+		complete_effect = {
+			get_supply_vehicles = { var = fo_dbg_trucks_have type = truck }
+			get_supply_vehicles = { var = fo_dbg_trucks_need type = truck need = yes }
+			get_supply_vehicles = { var = fo_dbg_trains_have type = train }
+			get_supply_vehicles = { var = fo_dbg_trains_need type = train need = yes }
+			set_variable = { fo_dbg_inf_target = num_target_equipment_in_armies@infantry_equipment }
+			set_variable = { fo_dbg_inf_in_armies = num_equipment_in_armies@infantry_equipment }
+			set_variable = { fo_dbg_inf_stock = num_equipment@infantry_equipment }
+			set_variable = { fo_dbg_free_mils = num_of_available_military_factories }
+			custom_effect_tooltip = fo_debug_readouts_tt
+		}
+	}
+}

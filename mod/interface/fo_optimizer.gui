@@ -1,0 +1,19 @@
+guiTypes = {
+
+	containerWindowType = {
+		name = "fo_optimizer_window"
+		# Anchored to the production tab window. Nudge x/y here if the button
+		# overlaps something in your UI scale.
+		position = { x = 420 y = 45 }
+		size = { width = 160 height = 40 }
+
+		buttonType = {
+			name = "fo_optimize_button"
+			quadTextureSprite = "GFX_button_148x34"
+			position = { x = 0 y = 0 }
+			buttonText = "FO_OPTIMIZE_BUTTON"
+			buttonFont = "hoi_18mbs"
+			pdx_tooltip = "FO_OPTIMIZE_TT"
+		}
+	}
+}

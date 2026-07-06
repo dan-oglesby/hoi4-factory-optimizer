@@ -1,0 +1,2221 @@
+# GENERATED FILE - do not hand-edit.
+# Produced by `python -m hoi4opt.genmod` from the active game+mod data.
+# Regenerate after changing your mod list so the equipment set matches.
+
+fo_run_optimizer = {
+	# -- inputs ------------------------------------------------------
+	set_temp_variable = { fo_free = num_of_available_military_factories }
+	set_variable = { fo_last_free = fo_free }
+	set_temp_variable = { fo_total_ic = 0 }
+
+	# engine-computed logistics need (railways, hub motorization, supply draw)
+	get_supply_vehicles_temp = { var = fo_truck_have type = truck }
+	get_supply_vehicles_temp = { var = fo_truck_need type = truck need = yes }
+	set_temp_variable = { fo_truck_def = { value = fo_truck_need subtract = fo_truck_have max = 0 } }
+	get_supply_vehicles_temp = { var = fo_train_have type = train }
+	get_supply_vehicles_temp = { var = fo_train_need type = train need = yes }
+	set_temp_variable = { fo_train_def = { value = fo_train_need subtract = fo_train_have max = 0 } }
+
+	# ---- amphibious_mechanized_equipment ----
+	set_temp_variable = { fo_def_amphibious_mechanized_equipment = num_target_equipment_in_armies@amphibious_mechanized_equipment }
+	subtract_from_temp_variable = { fo_def_amphibious_mechanized_equipment = num_equipment_in_armies@amphibious_mechanized_equipment }
+	subtract_from_temp_variable = { fo_def_amphibious_mechanized_equipment = num_equipment@amphibious_mechanized_equipment }
+	set_temp_variable = { fo_def_amphibious_mechanized_equipment = { value = fo_def_amphibious_mechanized_equipment max = 0 } }
+	set_temp_variable = { fo_def_amphibious_mechanized_equipment = { value = fo_def_amphibious_mechanized_equipment round = yes } }
+	set_temp_variable = { fo_cost_amphibious_mechanized_equipment = 0 }
+	if = { limit = { has_tech = amphibious_mechanized_infantry_2 }
+		set_temp_variable = { fo_cost_amphibious_mechanized_equipment = 10 }
+	}
+	else_if = { limit = { has_tech = amphibious_mechanized_infantry }
+		set_temp_variable = { fo_cost_amphibious_mechanized_equipment = 8 }
+	}
+	set_temp_variable = { fo_ic_amphibious_mechanized_equipment = { value = fo_def_amphibious_mechanized_equipment multiply = fo_cost_amphibious_mechanized_equipment } }
+	add_to_temp_variable = { fo_total_ic = fo_ic_amphibious_mechanized_equipment }
+
+	# ---- anti_air_equipment ----
+	set_temp_variable = { fo_def_anti_air_equipment = num_target_equipment_in_armies@anti_air_equipment }
+	subtract_from_temp_variable = { fo_def_anti_air_equipment = num_equipment_in_armies@anti_air_equipment }
+	subtract_from_temp_variable = { fo_def_anti_air_equipment = num_equipment@anti_air_equipment }
+	set_temp_variable = { fo_def_anti_air_equipment = { value = fo_def_anti_air_equipment max = 0 } }
+	set_temp_variable = { fo_def_anti_air_equipment = { value = fo_def_anti_air_equipment round = yes } }
+	set_temp_variable = { fo_cost_anti_air_equipment = 0 }
+	if = { limit = { has_tech = antiair5 }
+		set_temp_variable = { fo_cost_anti_air_equipment = 6 }
+	}
+	else_if = { limit = { has_tech = antiair2 }
+		set_temp_variable = { fo_cost_anti_air_equipment = 5 }
+	}
+	else_if = { limit = { has_tech = interwar_antiair }
+		set_temp_variable = { fo_cost_anti_air_equipment = 4 }
+	}
+	set_temp_variable = { fo_ic_anti_air_equipment = { value = fo_def_anti_air_equipment multiply = fo_cost_anti_air_equipment } }
+	add_to_temp_variable = { fo_total_ic = fo_ic_anti_air_equipment }
+
+	# ---- anti_tank_equipment ----
+	set_temp_variable = { fo_def_anti_tank_equipment = num_target_equipment_in_armies@anti_tank_equipment }
+	subtract_from_temp_variable = { fo_def_anti_tank_equipment = num_equipment_in_armies@anti_tank_equipment }
+	subtract_from_temp_variable = { fo_def_anti_tank_equipment = num_equipment@anti_tank_equipment }
+	set_temp_variable = { fo_def_anti_tank_equipment = { value = fo_def_anti_tank_equipment max = 0 } }
+	set_temp_variable = { fo_def_anti_tank_equipment = { value = fo_def_anti_tank_equipment round = yes } }
+	set_temp_variable = { fo_cost_anti_tank_equipment = 0 }
+	if = { limit = { has_tech = antitank5 }
+		set_temp_variable = { fo_cost_anti_tank_equipment = 6 }
+	}
+	else_if = { limit = { has_tech = antitank2 }
+		set_temp_variable = { fo_cost_anti_tank_equipment = 5 }
+	}
+	else_if = { limit = { has_tech = interwar_antitank }
+		set_temp_variable = { fo_cost_anti_tank_equipment = 4 }
+	}
+	set_temp_variable = { fo_ic_anti_tank_equipment = { value = fo_def_anti_tank_equipment multiply = fo_cost_anti_tank_equipment } }
+	add_to_temp_variable = { fo_total_ic = fo_ic_anti_tank_equipment }
+
+	# ---- armored_car_equipment ----
+	set_temp_variable = { fo_def_armored_car_equipment = num_target_equipment_in_armies@armored_car_equipment }
+	subtract_from_temp_variable = { fo_def_armored_car_equipment = num_equipment_in_armies@armored_car_equipment }
+	subtract_from_temp_variable = { fo_def_armored_car_equipment = num_equipment@armored_car_equipment }
+	set_temp_variable = { fo_def_armored_car_equipment = { value = fo_def_armored_car_equipment max = 0 } }
+	set_temp_variable = { fo_def_armored_car_equipment = { value = fo_def_armored_car_equipment round = yes } }
+	set_temp_variable = { fo_cost_armored_car_equipment = 0 }
+	if = { limit = { has_tech = armored_car3 }
+		set_temp_variable = { fo_cost_armored_car_equipment = 7.5 }
+	}
+	else_if = { limit = { has_tech = armored_car_at_upgrade }
+		set_temp_variable = { fo_cost_armored_car_equipment = 8.5 }
+	}
+	else_if = { limit = { has_tech = armored_car2 }
+		set_temp_variable = { fo_cost_armored_car_equipment = 5.5 }
+	}
+	else_if = { limit = { has_tech = armored_car1 }
+		set_temp_variable = { fo_cost_armored_car_equipment = 3.5 }
+	}
+	set_temp_variable = { fo_ic_armored_car_equipment = { value = fo_def_armored_car_equipment multiply = fo_cost_armored_car_equipment } }
+	add_to_temp_variable = { fo_total_ic = fo_ic_armored_car_equipment }
+
+	# ---- artillery_equipment ----
+	set_temp_variable = { fo_def_artillery_equipment = num_target_equipment_in_armies@artillery_equipment }
+	subtract_from_temp_variable = { fo_def_artillery_equipment = num_equipment_in_armies@artillery_equipment }
+	subtract_from_temp_variable = { fo_def_artillery_equipment = num_equipment@artillery_equipment }
+	set_temp_variable = { fo_def_artillery_equipment = { value = fo_def_artillery_equipment max = 0 } }
+	set_temp_variable = { fo_def_artillery_equipment = { value = fo_def_artillery_equipment round = yes } }
+	set_temp_variable = { fo_cost_artillery_equipment = 0 }
+	if = { limit = { has_tech = artillery4 }
+		set_temp_variable = { fo_cost_artillery_equipment = 4.5 }
+	}
+	else_if = { limit = { has_tech = artillery1 }
+		set_temp_variable = { fo_cost_artillery_equipment = 4 }
+	}
+	else_if = { limit = { has_tech = gw_artillery }
+		set_temp_variable = { fo_cost_artillery_equipment = 3.5 }
+	}
+	set_temp_variable = { fo_ic_artillery_equipment = { value = fo_def_artillery_equipment multiply = fo_cost_artillery_equipment } }
+	add_to_temp_variable = { fo_total_ic = fo_ic_artillery_equipment }
+
+	# ---- infantry_equipment ----
+	set_temp_variable = { fo_def_infantry_equipment = num_target_equipment_in_armies@infantry_equipment }
+	subtract_from_temp_variable = { fo_def_infantry_equipment = num_equipment_in_armies@infantry_equipment }
+	subtract_from_temp_variable = { fo_def_infantry_equipment = num_equipment@infantry_equipment }
+	set_temp_variable = { fo_def_infantry_equipment = { value = fo_def_infantry_equipment max = 0 } }
+	set_temp_variable = { fo_def_infantry_equipment = { value = fo_def_infantry_equipment round = yes } }
+	set_temp_variable = { fo_cost_infantry_equipment = 0 }
+	if = { limit = { has_tech = advanced_infantry_weapons }
+		set_temp_variable = { fo_cost_infantry_equipment = 0.69 }
+	}
+	else_if = { limit = { has_tech = improved_infantry_weapons }
+		set_temp_variable = { fo_cost_infantry_equipment = 0.58 }
+	}
+	else_if = { limit = { has_tech = infantry_weapons1 }
+		set_temp_variable = { fo_cost_infantry_equipment = 0.5 }
+	}
+	else = {
+		set_temp_variable = { fo_cost_infantry_equipment = 0.43 }
+	}
+	set_temp_variable = { fo_ic_infantry_equipment = { value = fo_def_infantry_equipment multiply = fo_cost_infantry_equipment } }
+	add_to_temp_variable = { fo_total_ic = fo_ic_infantry_equipment }
+
+	# ---- mechanized_equipment ----
+	set_temp_variable = { fo_def_mechanized_equipment = num_target_equipment_in_armies@mechanized_equipment }
+	subtract_from_temp_variable = { fo_def_mechanized_equipment = num_equipment_in_armies@mechanized_equipment }
+	subtract_from_temp_variable = { fo_def_mechanized_equipment = num_equipment@mechanized_equipment }
+	set_temp_variable = { fo_def_mechanized_equipment = { value = fo_def_mechanized_equipment max = 0 } }
+	set_temp_variable = { fo_def_mechanized_equipment = { value = fo_def_mechanized_equipment round = yes } }
+	set_temp_variable = { fo_cost_mechanized_equipment = 0 }
+	if = { limit = { has_tech = mechanised_infantry3 }
+		set_temp_variable = { fo_cost_mechanized_equipment = 12 }
+	}
+	else_if = { limit = { has_tech = mechanised_infantry2 }
+		set_temp_variable = { fo_cost_mechanized_equipment = 10 }
+	}
+	else_if = { limit = { has_tech = mechanised_infantry }
+		set_temp_variable = { fo_cost_mechanized_equipment = 8 }
+	}
+	set_temp_variable = { fo_ic_mechanized_equipment = { value = fo_def_mechanized_equipment multiply = fo_cost_mechanized_equipment } }
+	add_to_temp_variable = { fo_total_ic = fo_ic_mechanized_equipment }
+
+	# ---- motorbike_equipment ----
+	set_temp_variable = { fo_def_motorbike_equipment = num_target_equipment_in_armies@motorbike_equipment }
+	subtract_from_temp_variable = { fo_def_motorbike_equipment = num_equipment_in_armies@motorbike_equipment }
+	subtract_from_temp_variable = { fo_def_motorbike_equipment = num_equipment@motorbike_equipment }
+	set_temp_variable = { fo_def_motorbike_equipment = { value = fo_def_motorbike_equipment max = 0 } }
+	set_temp_variable = { fo_def_motorbike_equipment = { value = fo_def_motorbike_equipment round = yes } }
+	set_temp_variable = { fo_cost_motorbike_equipment = 0 }
+	if = { limit = { has_tech = sp_armored_motorized_military_police_tech }
+		set_temp_variable = { fo_cost_motorbike_equipment = 1.5 }
+	}
+	set_temp_variable = { fo_ic_motorbike_equipment = { value = fo_def_motorbike_equipment multiply = fo_cost_motorbike_equipment } }
+	add_to_temp_variable = { fo_total_ic = fo_ic_motorbike_equipment }
+
+	# ---- motorized_equipment ----
+	set_temp_variable = { fo_def_motorized_equipment = num_target_equipment_in_armies@motorized_equipment }
+	subtract_from_temp_variable = { fo_def_motorized_equipment = num_equipment_in_armies@motorized_equipment }
+	subtract_from_temp_variable = { fo_def_motorized_equipment = num_equipment@motorized_equipment }
+	set_temp_variable = { fo_def_motorized_equipment = { value = fo_def_motorized_equipment max = 0 } }
+	# trucks: supply-system need can exceed the army-side need; take the max
+	set_temp_variable = { fo_def_motorized_equipment = { value = fo_def_motorized_equipment max = fo_truck_def } }
+	set_temp_variable = { fo_def_motorized_equipment = { value = fo_def_motorized_equipment round = yes } }
+	set_temp_variable = { fo_cost_motorized_equipment = 0 }
+	if = { limit = { has_tech = motorised_infantry }
+		set_temp_variable = { fo_cost_motorized_equipment = 2.5 }
+	}
+	else_if = { limit = { has_tech = tech_trucks }
+		set_temp_variable = { fo_cost_motorized_equipment = 2.5 }
+	}
+	set_temp_variable = { fo_ic_motorized_equipment = { value = fo_def_motorized_equipment multiply = fo_cost_motorized_equipment } }
+	add_to_temp_variable = { fo_total_ic = fo_ic_motorized_equipment }
+
+	# ---- motorized_rocket_equipment ----
+	set_temp_variable = { fo_def_motorized_rocket_equipment = num_target_equipment_in_armies@motorized_rocket_equipment }
+	subtract_from_temp_variable = { fo_def_motorized_rocket_equipment = num_equipment_in_armies@motorized_rocket_equipment }
+	subtract_from_temp_variable = { fo_def_motorized_rocket_equipment = num_equipment@motorized_rocket_equipment }
+	set_temp_variable = { fo_def_motorized_rocket_equipment = { value = fo_def_motorized_rocket_equipment max = 0 } }
+	set_temp_variable = { fo_def_motorized_rocket_equipment = { value = fo_def_motorized_rocket_equipment round = yes } }
+	set_temp_variable = { fo_cost_motorized_rocket_equipment = 0 }
+	if = { limit = { has_tech = motorized_rocket_unit }
+		set_temp_variable = { fo_cost_motorized_rocket_equipment = 12 }
+	}
+	set_temp_variable = { fo_ic_motorized_rocket_equipment = { value = fo_def_motorized_rocket_equipment multiply = fo_cost_motorized_rocket_equipment } }
+	add_to_temp_variable = { fo_total_ic = fo_ic_motorized_rocket_equipment }
+
+	# ---- railway_gun_equipment ----
+	set_temp_variable = { fo_def_railway_gun_equipment = num_target_equipment_in_armies@railway_gun_equipment }
+	subtract_from_temp_variable = { fo_def_railway_gun_equipment = num_equipment_in_armies@railway_gun_equipment }
+	subtract_from_temp_variable = { fo_def_railway_gun_equipment = num_equipment@railway_gun_equipment }
+	set_temp_variable = { fo_def_railway_gun_equipment = { value = fo_def_railway_gun_equipment max = 0 } }
+	set_temp_variable = { fo_def_railway_gun_equipment = { value = fo_def_railway_gun_equipment round = yes } }
+	set_temp_variable = { fo_cost_railway_gun_equipment = 0 }
+	if = { limit = { has_tech = railway_gun }
+		set_temp_variable = { fo_cost_railway_gun_equipment = 800 }
+	}
+	set_temp_variable = { fo_ic_railway_gun_equipment = { value = fo_def_railway_gun_equipment multiply = fo_cost_railway_gun_equipment } }
+	add_to_temp_variable = { fo_total_ic = fo_ic_railway_gun_equipment }
+
+	# ---- rocket_artillery_equipment ----
+	set_temp_variable = { fo_def_rocket_artillery_equipment = num_target_equipment_in_armies@rocket_artillery_equipment }
+	subtract_from_temp_variable = { fo_def_rocket_artillery_equipment = num_equipment_in_armies@rocket_artillery_equipment }
+	subtract_from_temp_variable = { fo_def_rocket_artillery_equipment = num_equipment@rocket_artillery_equipment }
+	set_temp_variable = { fo_def_rocket_artillery_equipment = { value = fo_def_rocket_artillery_equipment max = 0 } }
+	set_temp_variable = { fo_def_rocket_artillery_equipment = { value = fo_def_rocket_artillery_equipment round = yes } }
+	set_temp_variable = { fo_cost_rocket_artillery_equipment = 0 }
+	if = { limit = { has_tech = rocket_artillery4 }
+		set_temp_variable = { fo_cost_rocket_artillery_equipment = 5 }
+	}
+	else_if = { limit = { has_tech = rocket_artillery }
+		set_temp_variable = { fo_cost_rocket_artillery_equipment = 4 }
+	}
+	set_temp_variable = { fo_ic_rocket_artillery_equipment = { value = fo_def_rocket_artillery_equipment multiply = fo_cost_rocket_artillery_equipment } }
+	add_to_temp_variable = { fo_total_ic = fo_ic_rocket_artillery_equipment }
+
+	# ---- support_equipment ----
+	set_temp_variable = { fo_def_support_equipment = num_target_equipment_in_armies@support_equipment }
+	subtract_from_temp_variable = { fo_def_support_equipment = num_equipment_in_armies@support_equipment }
+	subtract_from_temp_variable = { fo_def_support_equipment = num_equipment@support_equipment }
+	set_temp_variable = { fo_def_support_equipment = { value = fo_def_support_equipment max = 0 } }
+	set_temp_variable = { fo_def_support_equipment = { value = fo_def_support_equipment round = yes } }
+	set_temp_variable = { fo_cost_support_equipment = 0 }
+	if = { limit = { has_tech = tech_support }
+		set_temp_variable = { fo_cost_support_equipment = 4 }
+	}
+	set_temp_variable = { fo_ic_support_equipment = { value = fo_def_support_equipment multiply = fo_cost_support_equipment } }
+	add_to_temp_variable = { fo_total_ic = fo_ic_support_equipment }
+
+	# ---- train_equipment ----
+	set_temp_variable = { fo_def_train_equipment = num_target_equipment_in_armies@train_equipment }
+	subtract_from_temp_variable = { fo_def_train_equipment = num_equipment_in_armies@train_equipment }
+	subtract_from_temp_variable = { fo_def_train_equipment = num_equipment@train_equipment }
+	set_temp_variable = { fo_def_train_equipment = { value = fo_def_train_equipment max = 0 } }
+	# trains: demand is purely supply-side
+	set_temp_variable = { fo_def_train_equipment = { value = fo_def_train_equipment max = fo_train_def } }
+	set_temp_variable = { fo_def_train_equipment = { value = fo_def_train_equipment round = yes } }
+	set_temp_variable = { fo_cost_train_equipment = 0 }
+	if = { limit = { has_tech = wartime_train }
+		set_temp_variable = { fo_cost_train_equipment = 50 }
+	}
+	else_if = { limit = { has_tech = armored_train }
+		set_temp_variable = { fo_cost_train_equipment = 105 }
+	}
+	else_if = { limit = { has_tech = basic_train }
+		set_temp_variable = { fo_cost_train_equipment = 70 }
+	}
+	set_temp_variable = { fo_ic_train_equipment = { value = fo_def_train_equipment multiply = fo_cost_train_equipment } }
+	add_to_temp_variable = { fo_total_ic = fo_ic_train_equipment }
+
+	# ---- transport_plane_equipment ----
+	set_temp_variable = { fo_def_transport_plane_equipment = num_target_equipment_in_armies@transport_plane_equipment }
+	subtract_from_temp_variable = { fo_def_transport_plane_equipment = num_equipment_in_armies@transport_plane_equipment }
+	subtract_from_temp_variable = { fo_def_transport_plane_equipment = num_equipment@transport_plane_equipment }
+	set_temp_variable = { fo_def_transport_plane_equipment = { value = fo_def_transport_plane_equipment max = 0 } }
+	set_temp_variable = { fo_def_transport_plane_equipment = { value = fo_def_transport_plane_equipment round = yes } }
+	set_temp_variable = { fo_cost_transport_plane_equipment = 0 }
+	if = { limit = { OR = { has_tech = strategic_airlifter has_tech = bba_strategic_airlifter } }
+		set_temp_variable = { fo_cost_transport_plane_equipment = 38 }
+	}
+	else_if = { limit = { OR = { has_tech = improved_transport_plane has_tech = bba_improved_transport_plane } }
+		set_temp_variable = { fo_cost_transport_plane_equipment = 38 }
+	}
+	else_if = { limit = { OR = { has_tech = early_transport_plane has_tech = bba_early_transport_plane } }
+		set_temp_variable = { fo_cost_transport_plane_equipment = 38 }
+	}
+	set_temp_variable = { fo_ic_transport_plane_equipment = { value = fo_def_transport_plane_equipment multiply = fo_cost_transport_plane_equipment } }
+	add_to_temp_variable = { fo_total_ic = fo_ic_transport_plane_equipment }
+
+	# report variables (shown in the button tooltip)
+	set_variable = { fo_plan_amphibious_mechanized_equipment = 0 }
+	set_variable = { fo_amount_amphibious_mechanized_equipment = 0 }
+	set_variable = { fo_plan_anti_air_equipment = 0 }
+	set_variable = { fo_amount_anti_air_equipment = 0 }
+	set_variable = { fo_plan_anti_tank_equipment = 0 }
+	set_variable = { fo_amount_anti_tank_equipment = 0 }
+	set_variable = { fo_plan_armored_car_equipment = 0 }
+	set_variable = { fo_amount_armored_car_equipment = 0 }
+	set_variable = { fo_plan_artillery_equipment = 0 }
+	set_variable = { fo_amount_artillery_equipment = 0 }
+	set_variable = { fo_plan_infantry_equipment = 0 }
+	set_variable = { fo_amount_infantry_equipment = 0 }
+	set_variable = { fo_plan_mechanized_equipment = 0 }
+	set_variable = { fo_amount_mechanized_equipment = 0 }
+	set_variable = { fo_plan_motorbike_equipment = 0 }
+	set_variable = { fo_amount_motorbike_equipment = 0 }
+	set_variable = { fo_plan_motorized_equipment = 0 }
+	set_variable = { fo_amount_motorized_equipment = 0 }
+	set_variable = { fo_plan_motorized_rocket_equipment = 0 }
+	set_variable = { fo_amount_motorized_rocket_equipment = 0 }
+	set_variable = { fo_plan_railway_gun_equipment = 0 }
+	set_variable = { fo_amount_railway_gun_equipment = 0 }
+	set_variable = { fo_plan_rocket_artillery_equipment = 0 }
+	set_variable = { fo_amount_rocket_artillery_equipment = 0 }
+	set_variable = { fo_plan_support_equipment = 0 }
+	set_variable = { fo_amount_support_equipment = 0 }
+	set_variable = { fo_plan_train_equipment = 0 }
+	set_variable = { fo_amount_train_equipment = 0 }
+	set_variable = { fo_plan_transport_plane_equipment = 0 }
+	set_variable = { fo_amount_transport_plane_equipment = 0 }
+
+	if = {
+		limit = {
+			check_variable = { fo_total_ic > 0.5 }
+			check_variable = { fo_free > 0.5 }
+		}
+		# proportional-to-IC shares (floor), per-line cap, remainder to the
+		# largest-demand line - same policy as the CLI advisor
+		set_temp_variable = { fo_used = 0 }
+		set_temp_variable = { fo_max_ic = 0 }
+		set_temp_variable = { fo_max_idx = -1 }
+		set_temp_variable = { fo_share_amphibious_mechanized_equipment = { value = fo_ic_amphibious_mechanized_equipment multiply = fo_free divide = fo_total_ic subtract = 0.5 round = yes max = 0 min = 15 } }
+		add_to_temp_variable = { fo_used = fo_share_amphibious_mechanized_equipment }
+		if = { limit = { check_variable = { fo_ic_amphibious_mechanized_equipment > fo_max_ic } }
+			set_temp_variable = { fo_max_ic = fo_ic_amphibious_mechanized_equipment }
+			set_temp_variable = { fo_max_idx = 0 }
+		}
+		set_temp_variable = { fo_share_anti_air_equipment = { value = fo_ic_anti_air_equipment multiply = fo_free divide = fo_total_ic subtract = 0.5 round = yes max = 0 min = 15 } }
+		add_to_temp_variable = { fo_used = fo_share_anti_air_equipment }
+		if = { limit = { check_variable = { fo_ic_anti_air_equipment > fo_max_ic } }
+			set_temp_variable = { fo_max_ic = fo_ic_anti_air_equipment }
+			set_temp_variable = { fo_max_idx = 1 }
+		}
+		set_temp_variable = { fo_share_anti_tank_equipment = { value = fo_ic_anti_tank_equipment multiply = fo_free divide = fo_total_ic subtract = 0.5 round = yes max = 0 min = 15 } }
+		add_to_temp_variable = { fo_used = fo_share_anti_tank_equipment }
+		if = { limit = { check_variable = { fo_ic_anti_tank_equipment > fo_max_ic } }
+			set_temp_variable = { fo_max_ic = fo_ic_anti_tank_equipment }
+			set_temp_variable = { fo_max_idx = 2 }
+		}
+		set_temp_variable = { fo_share_armored_car_equipment = { value = fo_ic_armored_car_equipment multiply = fo_free divide = fo_total_ic subtract = 0.5 round = yes max = 0 min = 15 } }
+		add_to_temp_variable = { fo_used = fo_share_armored_car_equipment }
+		if = { limit = { check_variable = { fo_ic_armored_car_equipment > fo_max_ic } }
+			set_temp_variable = { fo_max_ic = fo_ic_armored_car_equipment }
+			set_temp_variable = { fo_max_idx = 3 }
+		}
+		set_temp_variable = { fo_share_artillery_equipment = { value = fo_ic_artillery_equipment multiply = fo_free divide = fo_total_ic subtract = 0.5 round = yes max = 0 min = 15 } }
+		add_to_temp_variable = { fo_used = fo_share_artillery_equipment }
+		if = { limit = { check_variable = { fo_ic_artillery_equipment > fo_max_ic } }
+			set_temp_variable = { fo_max_ic = fo_ic_artillery_equipment }
+			set_temp_variable = { fo_max_idx = 4 }
+		}
+		set_temp_variable = { fo_share_infantry_equipment = { value = fo_ic_infantry_equipment multiply = fo_free divide = fo_total_ic subtract = 0.5 round = yes max = 0 min = 15 } }
+		add_to_temp_variable = { fo_used = fo_share_infantry_equipment }
+		if = { limit = { check_variable = { fo_ic_infantry_equipment > fo_max_ic } }
+			set_temp_variable = { fo_max_ic = fo_ic_infantry_equipment }
+			set_temp_variable = { fo_max_idx = 5 }
+		}
+		set_temp_variable = { fo_share_mechanized_equipment = { value = fo_ic_mechanized_equipment multiply = fo_free divide = fo_total_ic subtract = 0.5 round = yes max = 0 min = 15 } }
+		add_to_temp_variable = { fo_used = fo_share_mechanized_equipment }
+		if = { limit = { check_variable = { fo_ic_mechanized_equipment > fo_max_ic } }
+			set_temp_variable = { fo_max_ic = fo_ic_mechanized_equipment }
+			set_temp_variable = { fo_max_idx = 6 }
+		}
+		set_temp_variable = { fo_share_motorbike_equipment = { value = fo_ic_motorbike_equipment multiply = fo_free divide = fo_total_ic subtract = 0.5 round = yes max = 0 min = 15 } }
+		add_to_temp_variable = { fo_used = fo_share_motorbike_equipment }
+		if = { limit = { check_variable = { fo_ic_motorbike_equipment > fo_max_ic } }
+			set_temp_variable = { fo_max_ic = fo_ic_motorbike_equipment }
+			set_temp_variable = { fo_max_idx = 7 }
+		}
+		set_temp_variable = { fo_share_motorized_equipment = { value = fo_ic_motorized_equipment multiply = fo_free divide = fo_total_ic subtract = 0.5 round = yes max = 0 min = 15 } }
+		add_to_temp_variable = { fo_used = fo_share_motorized_equipment }
+		if = { limit = { check_variable = { fo_ic_motorized_equipment > fo_max_ic } }
+			set_temp_variable = { fo_max_ic = fo_ic_motorized_equipment }
+			set_temp_variable = { fo_max_idx = 8 }
+		}
+		set_temp_variable = { fo_share_motorized_rocket_equipment = { value = fo_ic_motorized_rocket_equipment multiply = fo_free divide = fo_total_ic subtract = 0.5 round = yes max = 0 min = 15 } }
+		add_to_temp_variable = { fo_used = fo_share_motorized_rocket_equipment }
+		if = { limit = { check_variable = { fo_ic_motorized_rocket_equipment > fo_max_ic } }
+			set_temp_variable = { fo_max_ic = fo_ic_motorized_rocket_equipment }
+			set_temp_variable = { fo_max_idx = 9 }
+		}
+		set_temp_variable = { fo_share_railway_gun_equipment = { value = fo_ic_railway_gun_equipment multiply = fo_free divide = fo_total_ic subtract = 0.5 round = yes max = 0 min = 15 } }
+		add_to_temp_variable = { fo_used = fo_share_railway_gun_equipment }
+		if = { limit = { check_variable = { fo_ic_railway_gun_equipment > fo_max_ic } }
+			set_temp_variable = { fo_max_ic = fo_ic_railway_gun_equipment }
+			set_temp_variable = { fo_max_idx = 10 }
+		}
+		set_temp_variable = { fo_share_rocket_artillery_equipment = { value = fo_ic_rocket_artillery_equipment multiply = fo_free divide = fo_total_ic subtract = 0.5 round = yes max = 0 min = 15 } }
+		add_to_temp_variable = { fo_used = fo_share_rocket_artillery_equipment }
+		if = { limit = { check_variable = { fo_ic_rocket_artillery_equipment > fo_max_ic } }
+			set_temp_variable = { fo_max_ic = fo_ic_rocket_artillery_equipment }
+			set_temp_variable = { fo_max_idx = 11 }
+		}
+		set_temp_variable = { fo_share_support_equipment = { value = fo_ic_support_equipment multiply = fo_free divide = fo_total_ic subtract = 0.5 round = yes max = 0 min = 15 } }
+		add_to_temp_variable = { fo_used = fo_share_support_equipment }
+		if = { limit = { check_variable = { fo_ic_support_equipment > fo_max_ic } }
+			set_temp_variable = { fo_max_ic = fo_ic_support_equipment }
+			set_temp_variable = { fo_max_idx = 12 }
+		}
+		set_temp_variable = { fo_share_train_equipment = { value = fo_ic_train_equipment multiply = fo_free divide = fo_total_ic subtract = 0.5 round = yes max = 0 min = 15 } }
+		add_to_temp_variable = { fo_used = fo_share_train_equipment }
+		if = { limit = { check_variable = { fo_ic_train_equipment > fo_max_ic } }
+			set_temp_variable = { fo_max_ic = fo_ic_train_equipment }
+			set_temp_variable = { fo_max_idx = 13 }
+		}
+		set_temp_variable = { fo_share_transport_plane_equipment = { value = fo_ic_transport_plane_equipment multiply = fo_free divide = fo_total_ic subtract = 0.5 round = yes max = 0 min = 15 } }
+		add_to_temp_variable = { fo_used = fo_share_transport_plane_equipment }
+		if = { limit = { check_variable = { fo_ic_transport_plane_equipment > fo_max_ic } }
+			set_temp_variable = { fo_max_ic = fo_ic_transport_plane_equipment }
+			set_temp_variable = { fo_max_idx = 14 }
+		}
+		set_temp_variable = { fo_left = { value = fo_free subtract = fo_used max = 0 } }
+		if = { limit = { check_variable = { fo_max_idx = 0 } }
+			set_temp_variable = { fo_share_amphibious_mechanized_equipment = { value = fo_share_amphibious_mechanized_equipment add = fo_left min = 15 } }
+		}
+		if = { limit = { check_variable = { fo_max_idx = 1 } }
+			set_temp_variable = { fo_share_anti_air_equipment = { value = fo_share_anti_air_equipment add = fo_left min = 15 } }
+		}
+		if = { limit = { check_variable = { fo_max_idx = 2 } }
+			set_temp_variable = { fo_share_anti_tank_equipment = { value = fo_share_anti_tank_equipment add = fo_left min = 15 } }
+		}
+		if = { limit = { check_variable = { fo_max_idx = 3 } }
+			set_temp_variable = { fo_share_armored_car_equipment = { value = fo_share_armored_car_equipment add = fo_left min = 15 } }
+		}
+		if = { limit = { check_variable = { fo_max_idx = 4 } }
+			set_temp_variable = { fo_share_artillery_equipment = { value = fo_share_artillery_equipment add = fo_left min = 15 } }
+		}
+		if = { limit = { check_variable = { fo_max_idx = 5 } }
+			set_temp_variable = { fo_share_infantry_equipment = { value = fo_share_infantry_equipment add = fo_left min = 15 } }
+		}
+		if = { limit = { check_variable = { fo_max_idx = 6 } }
+			set_temp_variable = { fo_share_mechanized_equipment = { value = fo_share_mechanized_equipment add = fo_left min = 15 } }
+		}
+		if = { limit = { check_variable = { fo_max_idx = 7 } }
+			set_temp_variable = { fo_share_motorbike_equipment = { value = fo_share_motorbike_equipment add = fo_left min = 15 } }
+		}
+		if = { limit = { check_variable = { fo_max_idx = 8 } }
+			set_temp_variable = { fo_share_motorized_equipment = { value = fo_share_motorized_equipment add = fo_left min = 15 } }
+		}
+		if = { limit = { check_variable = { fo_max_idx = 9 } }
+			set_temp_variable = { fo_share_motorized_rocket_equipment = { value = fo_share_motorized_rocket_equipment add = fo_left min = 15 } }
+		}
+		if = { limit = { check_variable = { fo_max_idx = 10 } }
+			set_temp_variable = { fo_share_railway_gun_equipment = { value = fo_share_railway_gun_equipment add = fo_left min = 15 } }
+		}
+		if = { limit = { check_variable = { fo_max_idx = 11 } }
+			set_temp_variable = { fo_share_rocket_artillery_equipment = { value = fo_share_rocket_artillery_equipment add = fo_left min = 15 } }
+		}
+		if = { limit = { check_variable = { fo_max_idx = 12 } }
+			set_temp_variable = { fo_share_support_equipment = { value = fo_share_support_equipment add = fo_left min = 15 } }
+		}
+		if = { limit = { check_variable = { fo_max_idx = 13 } }
+			set_temp_variable = { fo_share_train_equipment = { value = fo_share_train_equipment add = fo_left min = 15 } }
+		}
+		if = { limit = { check_variable = { fo_max_idx = 14 } }
+			set_temp_variable = { fo_share_transport_plane_equipment = { value = fo_share_transport_plane_equipment add = fo_left min = 15 } }
+		}
+
+		# create finite lines: amount = deficit, so each line completes and
+		# releases its factories once the need is filled
+		if = { limit = { check_variable = { fo_share_amphibious_mechanized_equipment > 0.5 } check_variable = { fo_def_amphibious_mechanized_equipment > 0.5 } }
+			set_variable = { fo_plan_amphibious_mechanized_equipment = fo_share_amphibious_mechanized_equipment }
+			set_variable = { fo_amount_amphibious_mechanized_equipment = fo_def_amphibious_mechanized_equipment }
+			if = { limit = { has_tech = amphibious_mechanized_infantry_2 }
+				if = { limit = { check_variable = { fo_share_amphibious_mechanized_equipment > 14.5 } }
+					add_equipment_production = { equipment = { type = amphibious_mechanized_equipment_2 } requested_factories = 15 amount = fo_amount_amphibious_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_amphibious_mechanized_equipment > 13.5 } }
+					add_equipment_production = { equipment = { type = amphibious_mechanized_equipment_2 } requested_factories = 14 amount = fo_amount_amphibious_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_amphibious_mechanized_equipment > 12.5 } }
+					add_equipment_production = { equipment = { type = amphibious_mechanized_equipment_2 } requested_factories = 13 amount = fo_amount_amphibious_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_amphibious_mechanized_equipment > 11.5 } }
+					add_equipment_production = { equipment = { type = amphibious_mechanized_equipment_2 } requested_factories = 12 amount = fo_amount_amphibious_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_amphibious_mechanized_equipment > 10.5 } }
+					add_equipment_production = { equipment = { type = amphibious_mechanized_equipment_2 } requested_factories = 11 amount = fo_amount_amphibious_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_amphibious_mechanized_equipment > 9.5 } }
+					add_equipment_production = { equipment = { type = amphibious_mechanized_equipment_2 } requested_factories = 10 amount = fo_amount_amphibious_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_amphibious_mechanized_equipment > 8.5 } }
+					add_equipment_production = { equipment = { type = amphibious_mechanized_equipment_2 } requested_factories = 9 amount = fo_amount_amphibious_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_amphibious_mechanized_equipment > 7.5 } }
+					add_equipment_production = { equipment = { type = amphibious_mechanized_equipment_2 } requested_factories = 8 amount = fo_amount_amphibious_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_amphibious_mechanized_equipment > 6.5 } }
+					add_equipment_production = { equipment = { type = amphibious_mechanized_equipment_2 } requested_factories = 7 amount = fo_amount_amphibious_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_amphibious_mechanized_equipment > 5.5 } }
+					add_equipment_production = { equipment = { type = amphibious_mechanized_equipment_2 } requested_factories = 6 amount = fo_amount_amphibious_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_amphibious_mechanized_equipment > 4.5 } }
+					add_equipment_production = { equipment = { type = amphibious_mechanized_equipment_2 } requested_factories = 5 amount = fo_amount_amphibious_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_amphibious_mechanized_equipment > 3.5 } }
+					add_equipment_production = { equipment = { type = amphibious_mechanized_equipment_2 } requested_factories = 4 amount = fo_amount_amphibious_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_amphibious_mechanized_equipment > 2.5 } }
+					add_equipment_production = { equipment = { type = amphibious_mechanized_equipment_2 } requested_factories = 3 amount = fo_amount_amphibious_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_amphibious_mechanized_equipment > 1.5 } }
+					add_equipment_production = { equipment = { type = amphibious_mechanized_equipment_2 } requested_factories = 2 amount = fo_amount_amphibious_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_amphibious_mechanized_equipment > 0.5 } }
+					add_equipment_production = { equipment = { type = amphibious_mechanized_equipment_2 } requested_factories = 1 amount = fo_amount_amphibious_mechanized_equipment }
+				}
+			}
+			else_if = { limit = { has_tech = amphibious_mechanized_infantry }
+				if = { limit = { check_variable = { fo_share_amphibious_mechanized_equipment > 14.5 } }
+					add_equipment_production = { equipment = { type = amphibious_mechanized_equipment_1 } requested_factories = 15 amount = fo_amount_amphibious_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_amphibious_mechanized_equipment > 13.5 } }
+					add_equipment_production = { equipment = { type = amphibious_mechanized_equipment_1 } requested_factories = 14 amount = fo_amount_amphibious_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_amphibious_mechanized_equipment > 12.5 } }
+					add_equipment_production = { equipment = { type = amphibious_mechanized_equipment_1 } requested_factories = 13 amount = fo_amount_amphibious_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_amphibious_mechanized_equipment > 11.5 } }
+					add_equipment_production = { equipment = { type = amphibious_mechanized_equipment_1 } requested_factories = 12 amount = fo_amount_amphibious_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_amphibious_mechanized_equipment > 10.5 } }
+					add_equipment_production = { equipment = { type = amphibious_mechanized_equipment_1 } requested_factories = 11 amount = fo_amount_amphibious_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_amphibious_mechanized_equipment > 9.5 } }
+					add_equipment_production = { equipment = { type = amphibious_mechanized_equipment_1 } requested_factories = 10 amount = fo_amount_amphibious_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_amphibious_mechanized_equipment > 8.5 } }
+					add_equipment_production = { equipment = { type = amphibious_mechanized_equipment_1 } requested_factories = 9 amount = fo_amount_amphibious_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_amphibious_mechanized_equipment > 7.5 } }
+					add_equipment_production = { equipment = { type = amphibious_mechanized_equipment_1 } requested_factories = 8 amount = fo_amount_amphibious_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_amphibious_mechanized_equipment > 6.5 } }
+					add_equipment_production = { equipment = { type = amphibious_mechanized_equipment_1 } requested_factories = 7 amount = fo_amount_amphibious_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_amphibious_mechanized_equipment > 5.5 } }
+					add_equipment_production = { equipment = { type = amphibious_mechanized_equipment_1 } requested_factories = 6 amount = fo_amount_amphibious_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_amphibious_mechanized_equipment > 4.5 } }
+					add_equipment_production = { equipment = { type = amphibious_mechanized_equipment_1 } requested_factories = 5 amount = fo_amount_amphibious_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_amphibious_mechanized_equipment > 3.5 } }
+					add_equipment_production = { equipment = { type = amphibious_mechanized_equipment_1 } requested_factories = 4 amount = fo_amount_amphibious_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_amphibious_mechanized_equipment > 2.5 } }
+					add_equipment_production = { equipment = { type = amphibious_mechanized_equipment_1 } requested_factories = 3 amount = fo_amount_amphibious_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_amphibious_mechanized_equipment > 1.5 } }
+					add_equipment_production = { equipment = { type = amphibious_mechanized_equipment_1 } requested_factories = 2 amount = fo_amount_amphibious_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_amphibious_mechanized_equipment > 0.5 } }
+					add_equipment_production = { equipment = { type = amphibious_mechanized_equipment_1 } requested_factories = 1 amount = fo_amount_amphibious_mechanized_equipment }
+				}
+			}
+		}
+		if = { limit = { check_variable = { fo_share_anti_air_equipment > 0.5 } check_variable = { fo_def_anti_air_equipment > 0.5 } }
+			set_variable = { fo_plan_anti_air_equipment = fo_share_anti_air_equipment }
+			set_variable = { fo_amount_anti_air_equipment = fo_def_anti_air_equipment }
+			if = { limit = { has_tech = antiair5 }
+				if = { limit = { check_variable = { fo_share_anti_air_equipment > 14.5 } }
+					add_equipment_production = { equipment = { type = anti_air_equipment_3 } requested_factories = 15 amount = fo_amount_anti_air_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_air_equipment > 13.5 } }
+					add_equipment_production = { equipment = { type = anti_air_equipment_3 } requested_factories = 14 amount = fo_amount_anti_air_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_air_equipment > 12.5 } }
+					add_equipment_production = { equipment = { type = anti_air_equipment_3 } requested_factories = 13 amount = fo_amount_anti_air_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_air_equipment > 11.5 } }
+					add_equipment_production = { equipment = { type = anti_air_equipment_3 } requested_factories = 12 amount = fo_amount_anti_air_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_air_equipment > 10.5 } }
+					add_equipment_production = { equipment = { type = anti_air_equipment_3 } requested_factories = 11 amount = fo_amount_anti_air_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_air_equipment > 9.5 } }
+					add_equipment_production = { equipment = { type = anti_air_equipment_3 } requested_factories = 10 amount = fo_amount_anti_air_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_air_equipment > 8.5 } }
+					add_equipment_production = { equipment = { type = anti_air_equipment_3 } requested_factories = 9 amount = fo_amount_anti_air_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_air_equipment > 7.5 } }
+					add_equipment_production = { equipment = { type = anti_air_equipment_3 } requested_factories = 8 amount = fo_amount_anti_air_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_air_equipment > 6.5 } }
+					add_equipment_production = { equipment = { type = anti_air_equipment_3 } requested_factories = 7 amount = fo_amount_anti_air_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_air_equipment > 5.5 } }
+					add_equipment_production = { equipment = { type = anti_air_equipment_3 } requested_factories = 6 amount = fo_amount_anti_air_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_air_equipment > 4.5 } }
+					add_equipment_production = { equipment = { type = anti_air_equipment_3 } requested_factories = 5 amount = fo_amount_anti_air_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_air_equipment > 3.5 } }
+					add_equipment_production = { equipment = { type = anti_air_equipment_3 } requested_factories = 4 amount = fo_amount_anti_air_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_air_equipment > 2.5 } }
+					add_equipment_production = { equipment = { type = anti_air_equipment_3 } requested_factories = 3 amount = fo_amount_anti_air_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_air_equipment > 1.5 } }
+					add_equipment_production = { equipment = { type = anti_air_equipment_3 } requested_factories = 2 amount = fo_amount_anti_air_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_air_equipment > 0.5 } }
+					add_equipment_production = { equipment = { type = anti_air_equipment_3 } requested_factories = 1 amount = fo_amount_anti_air_equipment }
+				}
+			}
+			else_if = { limit = { has_tech = antiair2 }
+				if = { limit = { check_variable = { fo_share_anti_air_equipment > 14.5 } }
+					add_equipment_production = { equipment = { type = anti_air_equipment_2 } requested_factories = 15 amount = fo_amount_anti_air_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_air_equipment > 13.5 } }
+					add_equipment_production = { equipment = { type = anti_air_equipment_2 } requested_factories = 14 amount = fo_amount_anti_air_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_air_equipment > 12.5 } }
+					add_equipment_production = { equipment = { type = anti_air_equipment_2 } requested_factories = 13 amount = fo_amount_anti_air_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_air_equipment > 11.5 } }
+					add_equipment_production = { equipment = { type = anti_air_equipment_2 } requested_factories = 12 amount = fo_amount_anti_air_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_air_equipment > 10.5 } }
+					add_equipment_production = { equipment = { type = anti_air_equipment_2 } requested_factories = 11 amount = fo_amount_anti_air_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_air_equipment > 9.5 } }
+					add_equipment_production = { equipment = { type = anti_air_equipment_2 } requested_factories = 10 amount = fo_amount_anti_air_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_air_equipment > 8.5 } }
+					add_equipment_production = { equipment = { type = anti_air_equipment_2 } requested_factories = 9 amount = fo_amount_anti_air_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_air_equipment > 7.5 } }
+					add_equipment_production = { equipment = { type = anti_air_equipment_2 } requested_factories = 8 amount = fo_amount_anti_air_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_air_equipment > 6.5 } }
+					add_equipment_production = { equipment = { type = anti_air_equipment_2 } requested_factories = 7 amount = fo_amount_anti_air_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_air_equipment > 5.5 } }
+					add_equipment_production = { equipment = { type = anti_air_equipment_2 } requested_factories = 6 amount = fo_amount_anti_air_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_air_equipment > 4.5 } }
+					add_equipment_production = { equipment = { type = anti_air_equipment_2 } requested_factories = 5 amount = fo_amount_anti_air_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_air_equipment > 3.5 } }
+					add_equipment_production = { equipment = { type = anti_air_equipment_2 } requested_factories = 4 amount = fo_amount_anti_air_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_air_equipment > 2.5 } }
+					add_equipment_production = { equipment = { type = anti_air_equipment_2 } requested_factories = 3 amount = fo_amount_anti_air_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_air_equipment > 1.5 } }
+					add_equipment_production = { equipment = { type = anti_air_equipment_2 } requested_factories = 2 amount = fo_amount_anti_air_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_air_equipment > 0.5 } }
+					add_equipment_production = { equipment = { type = anti_air_equipment_2 } requested_factories = 1 amount = fo_amount_anti_air_equipment }
+				}
+			}
+			else_if = { limit = { has_tech = interwar_antiair }
+				if = { limit = { check_variable = { fo_share_anti_air_equipment > 14.5 } }
+					add_equipment_production = { equipment = { type = anti_air_equipment_1 } requested_factories = 15 amount = fo_amount_anti_air_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_air_equipment > 13.5 } }
+					add_equipment_production = { equipment = { type = anti_air_equipment_1 } requested_factories = 14 amount = fo_amount_anti_air_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_air_equipment > 12.5 } }
+					add_equipment_production = { equipment = { type = anti_air_equipment_1 } requested_factories = 13 amount = fo_amount_anti_air_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_air_equipment > 11.5 } }
+					add_equipment_production = { equipment = { type = anti_air_equipment_1 } requested_factories = 12 amount = fo_amount_anti_air_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_air_equipment > 10.5 } }
+					add_equipment_production = { equipment = { type = anti_air_equipment_1 } requested_factories = 11 amount = fo_amount_anti_air_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_air_equipment > 9.5 } }
+					add_equipment_production = { equipment = { type = anti_air_equipment_1 } requested_factories = 10 amount = fo_amount_anti_air_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_air_equipment > 8.5 } }
+					add_equipment_production = { equipment = { type = anti_air_equipment_1 } requested_factories = 9 amount = fo_amount_anti_air_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_air_equipment > 7.5 } }
+					add_equipment_production = { equipment = { type = anti_air_equipment_1 } requested_factories = 8 amount = fo_amount_anti_air_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_air_equipment > 6.5 } }
+					add_equipment_production = { equipment = { type = anti_air_equipment_1 } requested_factories = 7 amount = fo_amount_anti_air_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_air_equipment > 5.5 } }
+					add_equipment_production = { equipment = { type = anti_air_equipment_1 } requested_factories = 6 amount = fo_amount_anti_air_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_air_equipment > 4.5 } }
+					add_equipment_production = { equipment = { type = anti_air_equipment_1 } requested_factories = 5 amount = fo_amount_anti_air_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_air_equipment > 3.5 } }
+					add_equipment_production = { equipment = { type = anti_air_equipment_1 } requested_factories = 4 amount = fo_amount_anti_air_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_air_equipment > 2.5 } }
+					add_equipment_production = { equipment = { type = anti_air_equipment_1 } requested_factories = 3 amount = fo_amount_anti_air_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_air_equipment > 1.5 } }
+					add_equipment_production = { equipment = { type = anti_air_equipment_1 } requested_factories = 2 amount = fo_amount_anti_air_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_air_equipment > 0.5 } }
+					add_equipment_production = { equipment = { type = anti_air_equipment_1 } requested_factories = 1 amount = fo_amount_anti_air_equipment }
+				}
+			}
+		}
+		if = { limit = { check_variable = { fo_share_anti_tank_equipment > 0.5 } check_variable = { fo_def_anti_tank_equipment > 0.5 } }
+			set_variable = { fo_plan_anti_tank_equipment = fo_share_anti_tank_equipment }
+			set_variable = { fo_amount_anti_tank_equipment = fo_def_anti_tank_equipment }
+			if = { limit = { has_tech = antitank5 }
+				if = { limit = { check_variable = { fo_share_anti_tank_equipment > 14.5 } }
+					add_equipment_production = { equipment = { type = anti_tank_equipment_3 } requested_factories = 15 amount = fo_amount_anti_tank_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_tank_equipment > 13.5 } }
+					add_equipment_production = { equipment = { type = anti_tank_equipment_3 } requested_factories = 14 amount = fo_amount_anti_tank_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_tank_equipment > 12.5 } }
+					add_equipment_production = { equipment = { type = anti_tank_equipment_3 } requested_factories = 13 amount = fo_amount_anti_tank_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_tank_equipment > 11.5 } }
+					add_equipment_production = { equipment = { type = anti_tank_equipment_3 } requested_factories = 12 amount = fo_amount_anti_tank_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_tank_equipment > 10.5 } }
+					add_equipment_production = { equipment = { type = anti_tank_equipment_3 } requested_factories = 11 amount = fo_amount_anti_tank_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_tank_equipment > 9.5 } }
+					add_equipment_production = { equipment = { type = anti_tank_equipment_3 } requested_factories = 10 amount = fo_amount_anti_tank_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_tank_equipment > 8.5 } }
+					add_equipment_production = { equipment = { type = anti_tank_equipment_3 } requested_factories = 9 amount = fo_amount_anti_tank_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_tank_equipment > 7.5 } }
+					add_equipment_production = { equipment = { type = anti_tank_equipment_3 } requested_factories = 8 amount = fo_amount_anti_tank_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_tank_equipment > 6.5 } }
+					add_equipment_production = { equipment = { type = anti_tank_equipment_3 } requested_factories = 7 amount = fo_amount_anti_tank_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_tank_equipment > 5.5 } }
+					add_equipment_production = { equipment = { type = anti_tank_equipment_3 } requested_factories = 6 amount = fo_amount_anti_tank_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_tank_equipment > 4.5 } }
+					add_equipment_production = { equipment = { type = anti_tank_equipment_3 } requested_factories = 5 amount = fo_amount_anti_tank_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_tank_equipment > 3.5 } }
+					add_equipment_production = { equipment = { type = anti_tank_equipment_3 } requested_factories = 4 amount = fo_amount_anti_tank_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_tank_equipment > 2.5 } }
+					add_equipment_production = { equipment = { type = anti_tank_equipment_3 } requested_factories = 3 amount = fo_amount_anti_tank_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_tank_equipment > 1.5 } }
+					add_equipment_production = { equipment = { type = anti_tank_equipment_3 } requested_factories = 2 amount = fo_amount_anti_tank_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_tank_equipment > 0.5 } }
+					add_equipment_production = { equipment = { type = anti_tank_equipment_3 } requested_factories = 1 amount = fo_amount_anti_tank_equipment }
+				}
+			}
+			else_if = { limit = { has_tech = antitank2 }
+				if = { limit = { check_variable = { fo_share_anti_tank_equipment > 14.5 } }
+					add_equipment_production = { equipment = { type = anti_tank_equipment_2 } requested_factories = 15 amount = fo_amount_anti_tank_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_tank_equipment > 13.5 } }
+					add_equipment_production = { equipment = { type = anti_tank_equipment_2 } requested_factories = 14 amount = fo_amount_anti_tank_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_tank_equipment > 12.5 } }
+					add_equipment_production = { equipment = { type = anti_tank_equipment_2 } requested_factories = 13 amount = fo_amount_anti_tank_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_tank_equipment > 11.5 } }
+					add_equipment_production = { equipment = { type = anti_tank_equipment_2 } requested_factories = 12 amount = fo_amount_anti_tank_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_tank_equipment > 10.5 } }
+					add_equipment_production = { equipment = { type = anti_tank_equipment_2 } requested_factories = 11 amount = fo_amount_anti_tank_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_tank_equipment > 9.5 } }
+					add_equipment_production = { equipment = { type = anti_tank_equipment_2 } requested_factories = 10 amount = fo_amount_anti_tank_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_tank_equipment > 8.5 } }
+					add_equipment_production = { equipment = { type = anti_tank_equipment_2 } requested_factories = 9 amount = fo_amount_anti_tank_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_tank_equipment > 7.5 } }
+					add_equipment_production = { equipment = { type = anti_tank_equipment_2 } requested_factories = 8 amount = fo_amount_anti_tank_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_tank_equipment > 6.5 } }
+					add_equipment_production = { equipment = { type = anti_tank_equipment_2 } requested_factories = 7 amount = fo_amount_anti_tank_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_tank_equipment > 5.5 } }
+					add_equipment_production = { equipment = { type = anti_tank_equipment_2 } requested_factories = 6 amount = fo_amount_anti_tank_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_tank_equipment > 4.5 } }
+					add_equipment_production = { equipment = { type = anti_tank_equipment_2 } requested_factories = 5 amount = fo_amount_anti_tank_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_tank_equipment > 3.5 } }
+					add_equipment_production = { equipment = { type = anti_tank_equipment_2 } requested_factories = 4 amount = fo_amount_anti_tank_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_tank_equipment > 2.5 } }
+					add_equipment_production = { equipment = { type = anti_tank_equipment_2 } requested_factories = 3 amount = fo_amount_anti_tank_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_tank_equipment > 1.5 } }
+					add_equipment_production = { equipment = { type = anti_tank_equipment_2 } requested_factories = 2 amount = fo_amount_anti_tank_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_tank_equipment > 0.5 } }
+					add_equipment_production = { equipment = { type = anti_tank_equipment_2 } requested_factories = 1 amount = fo_amount_anti_tank_equipment }
+				}
+			}
+			else_if = { limit = { has_tech = interwar_antitank }
+				if = { limit = { check_variable = { fo_share_anti_tank_equipment > 14.5 } }
+					add_equipment_production = { equipment = { type = anti_tank_equipment_1 } requested_factories = 15 amount = fo_amount_anti_tank_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_tank_equipment > 13.5 } }
+					add_equipment_production = { equipment = { type = anti_tank_equipment_1 } requested_factories = 14 amount = fo_amount_anti_tank_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_tank_equipment > 12.5 } }
+					add_equipment_production = { equipment = { type = anti_tank_equipment_1 } requested_factories = 13 amount = fo_amount_anti_tank_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_tank_equipment > 11.5 } }
+					add_equipment_production = { equipment = { type = anti_tank_equipment_1 } requested_factories = 12 amount = fo_amount_anti_tank_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_tank_equipment > 10.5 } }
+					add_equipment_production = { equipment = { type = anti_tank_equipment_1 } requested_factories = 11 amount = fo_amount_anti_tank_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_tank_equipment > 9.5 } }
+					add_equipment_production = { equipment = { type = anti_tank_equipment_1 } requested_factories = 10 amount = fo_amount_anti_tank_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_tank_equipment > 8.5 } }
+					add_equipment_production = { equipment = { type = anti_tank_equipment_1 } requested_factories = 9 amount = fo_amount_anti_tank_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_tank_equipment > 7.5 } }
+					add_equipment_production = { equipment = { type = anti_tank_equipment_1 } requested_factories = 8 amount = fo_amount_anti_tank_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_tank_equipment > 6.5 } }
+					add_equipment_production = { equipment = { type = anti_tank_equipment_1 } requested_factories = 7 amount = fo_amount_anti_tank_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_tank_equipment > 5.5 } }
+					add_equipment_production = { equipment = { type = anti_tank_equipment_1 } requested_factories = 6 amount = fo_amount_anti_tank_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_tank_equipment > 4.5 } }
+					add_equipment_production = { equipment = { type = anti_tank_equipment_1 } requested_factories = 5 amount = fo_amount_anti_tank_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_tank_equipment > 3.5 } }
+					add_equipment_production = { equipment = { type = anti_tank_equipment_1 } requested_factories = 4 amount = fo_amount_anti_tank_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_tank_equipment > 2.5 } }
+					add_equipment_production = { equipment = { type = anti_tank_equipment_1 } requested_factories = 3 amount = fo_amount_anti_tank_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_tank_equipment > 1.5 } }
+					add_equipment_production = { equipment = { type = anti_tank_equipment_1 } requested_factories = 2 amount = fo_amount_anti_tank_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_anti_tank_equipment > 0.5 } }
+					add_equipment_production = { equipment = { type = anti_tank_equipment_1 } requested_factories = 1 amount = fo_amount_anti_tank_equipment }
+				}
+			}
+		}
+		if = { limit = { check_variable = { fo_share_armored_car_equipment > 0.5 } check_variable = { fo_def_armored_car_equipment > 0.5 } }
+			set_variable = { fo_plan_armored_car_equipment = fo_share_armored_car_equipment }
+			set_variable = { fo_amount_armored_car_equipment = fo_def_armored_car_equipment }
+			if = { limit = { has_tech = armored_car3 }
+				if = { limit = { check_variable = { fo_share_armored_car_equipment > 14.5 } }
+					add_equipment_production = { equipment = { type = armored_car_equipment_2 } requested_factories = 15 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 13.5 } }
+					add_equipment_production = { equipment = { type = armored_car_equipment_2 } requested_factories = 14 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 12.5 } }
+					add_equipment_production = { equipment = { type = armored_car_equipment_2 } requested_factories = 13 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 11.5 } }
+					add_equipment_production = { equipment = { type = armored_car_equipment_2 } requested_factories = 12 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 10.5 } }
+					add_equipment_production = { equipment = { type = armored_car_equipment_2 } requested_factories = 11 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 9.5 } }
+					add_equipment_production = { equipment = { type = armored_car_equipment_2 } requested_factories = 10 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 8.5 } }
+					add_equipment_production = { equipment = { type = armored_car_equipment_2 } requested_factories = 9 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 7.5 } }
+					add_equipment_production = { equipment = { type = armored_car_equipment_2 } requested_factories = 8 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 6.5 } }
+					add_equipment_production = { equipment = { type = armored_car_equipment_2 } requested_factories = 7 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 5.5 } }
+					add_equipment_production = { equipment = { type = armored_car_equipment_2 } requested_factories = 6 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 4.5 } }
+					add_equipment_production = { equipment = { type = armored_car_equipment_2 } requested_factories = 5 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 3.5 } }
+					add_equipment_production = { equipment = { type = armored_car_equipment_2 } requested_factories = 4 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 2.5 } }
+					add_equipment_production = { equipment = { type = armored_car_equipment_2 } requested_factories = 3 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 1.5 } }
+					add_equipment_production = { equipment = { type = armored_car_equipment_2 } requested_factories = 2 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 0.5 } }
+					add_equipment_production = { equipment = { type = armored_car_equipment_2 } requested_factories = 1 amount = fo_amount_armored_car_equipment }
+				}
+			}
+			else_if = { limit = { has_tech = armored_car_at_upgrade }
+				if = { limit = { check_variable = { fo_share_armored_car_equipment > 14.5 } }
+					add_equipment_production = { equipment = { type = armored_car_at_equipment } requested_factories = 15 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 13.5 } }
+					add_equipment_production = { equipment = { type = armored_car_at_equipment } requested_factories = 14 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 12.5 } }
+					add_equipment_production = { equipment = { type = armored_car_at_equipment } requested_factories = 13 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 11.5 } }
+					add_equipment_production = { equipment = { type = armored_car_at_equipment } requested_factories = 12 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 10.5 } }
+					add_equipment_production = { equipment = { type = armored_car_at_equipment } requested_factories = 11 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 9.5 } }
+					add_equipment_production = { equipment = { type = armored_car_at_equipment } requested_factories = 10 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 8.5 } }
+					add_equipment_production = { equipment = { type = armored_car_at_equipment } requested_factories = 9 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 7.5 } }
+					add_equipment_production = { equipment = { type = armored_car_at_equipment } requested_factories = 8 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 6.5 } }
+					add_equipment_production = { equipment = { type = armored_car_at_equipment } requested_factories = 7 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 5.5 } }
+					add_equipment_production = { equipment = { type = armored_car_at_equipment } requested_factories = 6 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 4.5 } }
+					add_equipment_production = { equipment = { type = armored_car_at_equipment } requested_factories = 5 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 3.5 } }
+					add_equipment_production = { equipment = { type = armored_car_at_equipment } requested_factories = 4 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 2.5 } }
+					add_equipment_production = { equipment = { type = armored_car_at_equipment } requested_factories = 3 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 1.5 } }
+					add_equipment_production = { equipment = { type = armored_car_at_equipment } requested_factories = 2 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 0.5 } }
+					add_equipment_production = { equipment = { type = armored_car_at_equipment } requested_factories = 1 amount = fo_amount_armored_car_equipment }
+				}
+			}
+			else_if = { limit = { has_tech = armored_car2 }
+				if = { limit = { check_variable = { fo_share_armored_car_equipment > 14.5 } }
+					add_equipment_production = { equipment = { type = armored_car_equipment_1 } requested_factories = 15 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 13.5 } }
+					add_equipment_production = { equipment = { type = armored_car_equipment_1 } requested_factories = 14 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 12.5 } }
+					add_equipment_production = { equipment = { type = armored_car_equipment_1 } requested_factories = 13 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 11.5 } }
+					add_equipment_production = { equipment = { type = armored_car_equipment_1 } requested_factories = 12 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 10.5 } }
+					add_equipment_production = { equipment = { type = armored_car_equipment_1 } requested_factories = 11 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 9.5 } }
+					add_equipment_production = { equipment = { type = armored_car_equipment_1 } requested_factories = 10 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 8.5 } }
+					add_equipment_production = { equipment = { type = armored_car_equipment_1 } requested_factories = 9 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 7.5 } }
+					add_equipment_production = { equipment = { type = armored_car_equipment_1 } requested_factories = 8 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 6.5 } }
+					add_equipment_production = { equipment = { type = armored_car_equipment_1 } requested_factories = 7 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 5.5 } }
+					add_equipment_production = { equipment = { type = armored_car_equipment_1 } requested_factories = 6 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 4.5 } }
+					add_equipment_production = { equipment = { type = armored_car_equipment_1 } requested_factories = 5 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 3.5 } }
+					add_equipment_production = { equipment = { type = armored_car_equipment_1 } requested_factories = 4 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 2.5 } }
+					add_equipment_production = { equipment = { type = armored_car_equipment_1 } requested_factories = 3 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 1.5 } }
+					add_equipment_production = { equipment = { type = armored_car_equipment_1 } requested_factories = 2 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 0.5 } }
+					add_equipment_production = { equipment = { type = armored_car_equipment_1 } requested_factories = 1 amount = fo_amount_armored_car_equipment }
+				}
+			}
+			else_if = { limit = { has_tech = armored_car1 }
+				if = { limit = { check_variable = { fo_share_armored_car_equipment > 14.5 } }
+					add_equipment_production = { equipment = { type = gw_armored_car_equipment } requested_factories = 15 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 13.5 } }
+					add_equipment_production = { equipment = { type = gw_armored_car_equipment } requested_factories = 14 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 12.5 } }
+					add_equipment_production = { equipment = { type = gw_armored_car_equipment } requested_factories = 13 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 11.5 } }
+					add_equipment_production = { equipment = { type = gw_armored_car_equipment } requested_factories = 12 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 10.5 } }
+					add_equipment_production = { equipment = { type = gw_armored_car_equipment } requested_factories = 11 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 9.5 } }
+					add_equipment_production = { equipment = { type = gw_armored_car_equipment } requested_factories = 10 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 8.5 } }
+					add_equipment_production = { equipment = { type = gw_armored_car_equipment } requested_factories = 9 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 7.5 } }
+					add_equipment_production = { equipment = { type = gw_armored_car_equipment } requested_factories = 8 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 6.5 } }
+					add_equipment_production = { equipment = { type = gw_armored_car_equipment } requested_factories = 7 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 5.5 } }
+					add_equipment_production = { equipment = { type = gw_armored_car_equipment } requested_factories = 6 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 4.5 } }
+					add_equipment_production = { equipment = { type = gw_armored_car_equipment } requested_factories = 5 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 3.5 } }
+					add_equipment_production = { equipment = { type = gw_armored_car_equipment } requested_factories = 4 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 2.5 } }
+					add_equipment_production = { equipment = { type = gw_armored_car_equipment } requested_factories = 3 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 1.5 } }
+					add_equipment_production = { equipment = { type = gw_armored_car_equipment } requested_factories = 2 amount = fo_amount_armored_car_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_armored_car_equipment > 0.5 } }
+					add_equipment_production = { equipment = { type = gw_armored_car_equipment } requested_factories = 1 amount = fo_amount_armored_car_equipment }
+				}
+			}
+		}
+		if = { limit = { check_variable = { fo_share_artillery_equipment > 0.5 } check_variable = { fo_def_artillery_equipment > 0.5 } }
+			set_variable = { fo_plan_artillery_equipment = fo_share_artillery_equipment }
+			set_variable = { fo_amount_artillery_equipment = fo_def_artillery_equipment }
+			if = { limit = { has_tech = artillery4 }
+				if = { limit = { check_variable = { fo_share_artillery_equipment > 14.5 } }
+					add_equipment_production = { equipment = { type = artillery_equipment_3 } requested_factories = 15 amount = fo_amount_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_artillery_equipment > 13.5 } }
+					add_equipment_production = { equipment = { type = artillery_equipment_3 } requested_factories = 14 amount = fo_amount_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_artillery_equipment > 12.5 } }
+					add_equipment_production = { equipment = { type = artillery_equipment_3 } requested_factories = 13 amount = fo_amount_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_artillery_equipment > 11.5 } }
+					add_equipment_production = { equipment = { type = artillery_equipment_3 } requested_factories = 12 amount = fo_amount_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_artillery_equipment > 10.5 } }
+					add_equipment_production = { equipment = { type = artillery_equipment_3 } requested_factories = 11 amount = fo_amount_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_artillery_equipment > 9.5 } }
+					add_equipment_production = { equipment = { type = artillery_equipment_3 } requested_factories = 10 amount = fo_amount_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_artillery_equipment > 8.5 } }
+					add_equipment_production = { equipment = { type = artillery_equipment_3 } requested_factories = 9 amount = fo_amount_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_artillery_equipment > 7.5 } }
+					add_equipment_production = { equipment = { type = artillery_equipment_3 } requested_factories = 8 amount = fo_amount_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_artillery_equipment > 6.5 } }
+					add_equipment_production = { equipment = { type = artillery_equipment_3 } requested_factories = 7 amount = fo_amount_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_artillery_equipment > 5.5 } }
+					add_equipment_production = { equipment = { type = artillery_equipment_3 } requested_factories = 6 amount = fo_amount_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_artillery_equipment > 4.5 } }
+					add_equipment_production = { equipment = { type = artillery_equipment_3 } requested_factories = 5 amount = fo_amount_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_artillery_equipment > 3.5 } }
+					add_equipment_production = { equipment = { type = artillery_equipment_3 } requested_factories = 4 amount = fo_amount_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_artillery_equipment > 2.5 } }
+					add_equipment_production = { equipment = { type = artillery_equipment_3 } requested_factories = 3 amount = fo_amount_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_artillery_equipment > 1.5 } }
+					add_equipment_production = { equipment = { type = artillery_equipment_3 } requested_factories = 2 amount = fo_amount_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_artillery_equipment > 0.5 } }
+					add_equipment_production = { equipment = { type = artillery_equipment_3 } requested_factories = 1 amount = fo_amount_artillery_equipment }
+				}
+			}
+			else_if = { limit = { has_tech = artillery1 }
+				if = { limit = { check_variable = { fo_share_artillery_equipment > 14.5 } }
+					add_equipment_production = { equipment = { type = artillery_equipment_2 } requested_factories = 15 amount = fo_amount_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_artillery_equipment > 13.5 } }
+					add_equipment_production = { equipment = { type = artillery_equipment_2 } requested_factories = 14 amount = fo_amount_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_artillery_equipment > 12.5 } }
+					add_equipment_production = { equipment = { type = artillery_equipment_2 } requested_factories = 13 amount = fo_amount_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_artillery_equipment > 11.5 } }
+					add_equipment_production = { equipment = { type = artillery_equipment_2 } requested_factories = 12 amount = fo_amount_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_artillery_equipment > 10.5 } }
+					add_equipment_production = { equipment = { type = artillery_equipment_2 } requested_factories = 11 amount = fo_amount_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_artillery_equipment > 9.5 } }
+					add_equipment_production = { equipment = { type = artillery_equipment_2 } requested_factories = 10 amount = fo_amount_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_artillery_equipment > 8.5 } }
+					add_equipment_production = { equipment = { type = artillery_equipment_2 } requested_factories = 9 amount = fo_amount_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_artillery_equipment > 7.5 } }
+					add_equipment_production = { equipment = { type = artillery_equipment_2 } requested_factories = 8 amount = fo_amount_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_artillery_equipment > 6.5 } }
+					add_equipment_production = { equipment = { type = artillery_equipment_2 } requested_factories = 7 amount = fo_amount_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_artillery_equipment > 5.5 } }
+					add_equipment_production = { equipment = { type = artillery_equipment_2 } requested_factories = 6 amount = fo_amount_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_artillery_equipment > 4.5 } }
+					add_equipment_production = { equipment = { type = artillery_equipment_2 } requested_factories = 5 amount = fo_amount_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_artillery_equipment > 3.5 } }
+					add_equipment_production = { equipment = { type = artillery_equipment_2 } requested_factories = 4 amount = fo_amount_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_artillery_equipment > 2.5 } }
+					add_equipment_production = { equipment = { type = artillery_equipment_2 } requested_factories = 3 amount = fo_amount_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_artillery_equipment > 1.5 } }
+					add_equipment_production = { equipment = { type = artillery_equipment_2 } requested_factories = 2 amount = fo_amount_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_artillery_equipment > 0.5 } }
+					add_equipment_production = { equipment = { type = artillery_equipment_2 } requested_factories = 1 amount = fo_amount_artillery_equipment }
+				}
+			}
+			else_if = { limit = { has_tech = gw_artillery }
+				if = { limit = { check_variable = { fo_share_artillery_equipment > 14.5 } }
+					add_equipment_production = { equipment = { type = artillery_equipment_1 } requested_factories = 15 amount = fo_amount_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_artillery_equipment > 13.5 } }
+					add_equipment_production = { equipment = { type = artillery_equipment_1 } requested_factories = 14 amount = fo_amount_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_artillery_equipment > 12.5 } }
+					add_equipment_production = { equipment = { type = artillery_equipment_1 } requested_factories = 13 amount = fo_amount_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_artillery_equipment > 11.5 } }
+					add_equipment_production = { equipment = { type = artillery_equipment_1 } requested_factories = 12 amount = fo_amount_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_artillery_equipment > 10.5 } }
+					add_equipment_production = { equipment = { type = artillery_equipment_1 } requested_factories = 11 amount = fo_amount_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_artillery_equipment > 9.5 } }
+					add_equipment_production = { equipment = { type = artillery_equipment_1 } requested_factories = 10 amount = fo_amount_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_artillery_equipment > 8.5 } }
+					add_equipment_production = { equipment = { type = artillery_equipment_1 } requested_factories = 9 amount = fo_amount_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_artillery_equipment > 7.5 } }
+					add_equipment_production = { equipment = { type = artillery_equipment_1 } requested_factories = 8 amount = fo_amount_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_artillery_equipment > 6.5 } }
+					add_equipment_production = { equipment = { type = artillery_equipment_1 } requested_factories = 7 amount = fo_amount_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_artillery_equipment > 5.5 } }
+					add_equipment_production = { equipment = { type = artillery_equipment_1 } requested_factories = 6 amount = fo_amount_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_artillery_equipment > 4.5 } }
+					add_equipment_production = { equipment = { type = artillery_equipment_1 } requested_factories = 5 amount = fo_amount_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_artillery_equipment > 3.5 } }
+					add_equipment_production = { equipment = { type = artillery_equipment_1 } requested_factories = 4 amount = fo_amount_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_artillery_equipment > 2.5 } }
+					add_equipment_production = { equipment = { type = artillery_equipment_1 } requested_factories = 3 amount = fo_amount_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_artillery_equipment > 1.5 } }
+					add_equipment_production = { equipment = { type = artillery_equipment_1 } requested_factories = 2 amount = fo_amount_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_artillery_equipment > 0.5 } }
+					add_equipment_production = { equipment = { type = artillery_equipment_1 } requested_factories = 1 amount = fo_amount_artillery_equipment }
+				}
+			}
+		}
+		if = { limit = { check_variable = { fo_share_infantry_equipment > 0.5 } check_variable = { fo_def_infantry_equipment > 0.5 } }
+			set_variable = { fo_plan_infantry_equipment = fo_share_infantry_equipment }
+			set_variable = { fo_amount_infantry_equipment = fo_def_infantry_equipment }
+			if = { limit = { has_tech = advanced_infantry_weapons }
+				if = { limit = { check_variable = { fo_share_infantry_equipment > 14.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_3 } requested_factories = 15 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 13.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_3 } requested_factories = 14 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 12.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_3 } requested_factories = 13 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 11.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_3 } requested_factories = 12 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 10.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_3 } requested_factories = 11 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 9.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_3 } requested_factories = 10 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 8.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_3 } requested_factories = 9 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 7.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_3 } requested_factories = 8 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 6.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_3 } requested_factories = 7 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 5.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_3 } requested_factories = 6 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 4.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_3 } requested_factories = 5 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 3.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_3 } requested_factories = 4 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 2.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_3 } requested_factories = 3 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 1.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_3 } requested_factories = 2 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 0.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_3 } requested_factories = 1 amount = fo_amount_infantry_equipment }
+				}
+			}
+			else_if = { limit = { has_tech = improved_infantry_weapons }
+				if = { limit = { check_variable = { fo_share_infantry_equipment > 14.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_2 } requested_factories = 15 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 13.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_2 } requested_factories = 14 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 12.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_2 } requested_factories = 13 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 11.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_2 } requested_factories = 12 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 10.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_2 } requested_factories = 11 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 9.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_2 } requested_factories = 10 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 8.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_2 } requested_factories = 9 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 7.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_2 } requested_factories = 8 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 6.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_2 } requested_factories = 7 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 5.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_2 } requested_factories = 6 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 4.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_2 } requested_factories = 5 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 3.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_2 } requested_factories = 4 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 2.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_2 } requested_factories = 3 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 1.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_2 } requested_factories = 2 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 0.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_2 } requested_factories = 1 amount = fo_amount_infantry_equipment }
+				}
+			}
+			else_if = { limit = { has_tech = infantry_weapons1 }
+				if = { limit = { check_variable = { fo_share_infantry_equipment > 14.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_1 } requested_factories = 15 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 13.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_1 } requested_factories = 14 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 12.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_1 } requested_factories = 13 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 11.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_1 } requested_factories = 12 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 10.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_1 } requested_factories = 11 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 9.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_1 } requested_factories = 10 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 8.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_1 } requested_factories = 9 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 7.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_1 } requested_factories = 8 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 6.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_1 } requested_factories = 7 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 5.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_1 } requested_factories = 6 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 4.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_1 } requested_factories = 5 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 3.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_1 } requested_factories = 4 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 2.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_1 } requested_factories = 3 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 1.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_1 } requested_factories = 2 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 0.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_1 } requested_factories = 1 amount = fo_amount_infantry_equipment }
+				}
+			}
+			else = {
+				if = { limit = { check_variable = { fo_share_infantry_equipment > 14.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_0 } requested_factories = 15 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 13.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_0 } requested_factories = 14 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 12.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_0 } requested_factories = 13 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 11.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_0 } requested_factories = 12 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 10.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_0 } requested_factories = 11 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 9.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_0 } requested_factories = 10 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 8.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_0 } requested_factories = 9 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 7.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_0 } requested_factories = 8 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 6.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_0 } requested_factories = 7 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 5.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_0 } requested_factories = 6 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 4.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_0 } requested_factories = 5 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 3.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_0 } requested_factories = 4 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 2.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_0 } requested_factories = 3 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 1.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_0 } requested_factories = 2 amount = fo_amount_infantry_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_infantry_equipment > 0.5 } }
+					add_equipment_production = { equipment = { type = infantry_equipment_0 } requested_factories = 1 amount = fo_amount_infantry_equipment }
+				}
+			}
+		}
+		if = { limit = { check_variable = { fo_share_mechanized_equipment > 0.5 } check_variable = { fo_def_mechanized_equipment > 0.5 } }
+			set_variable = { fo_plan_mechanized_equipment = fo_share_mechanized_equipment }
+			set_variable = { fo_amount_mechanized_equipment = fo_def_mechanized_equipment }
+			if = { limit = { has_tech = mechanised_infantry3 }
+				if = { limit = { check_variable = { fo_share_mechanized_equipment > 14.5 } }
+					add_equipment_production = { equipment = { type = mechanized_equipment_3 } requested_factories = 15 amount = fo_amount_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_mechanized_equipment > 13.5 } }
+					add_equipment_production = { equipment = { type = mechanized_equipment_3 } requested_factories = 14 amount = fo_amount_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_mechanized_equipment > 12.5 } }
+					add_equipment_production = { equipment = { type = mechanized_equipment_3 } requested_factories = 13 amount = fo_amount_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_mechanized_equipment > 11.5 } }
+					add_equipment_production = { equipment = { type = mechanized_equipment_3 } requested_factories = 12 amount = fo_amount_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_mechanized_equipment > 10.5 } }
+					add_equipment_production = { equipment = { type = mechanized_equipment_3 } requested_factories = 11 amount = fo_amount_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_mechanized_equipment > 9.5 } }
+					add_equipment_production = { equipment = { type = mechanized_equipment_3 } requested_factories = 10 amount = fo_amount_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_mechanized_equipment > 8.5 } }
+					add_equipment_production = { equipment = { type = mechanized_equipment_3 } requested_factories = 9 amount = fo_amount_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_mechanized_equipment > 7.5 } }
+					add_equipment_production = { equipment = { type = mechanized_equipment_3 } requested_factories = 8 amount = fo_amount_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_mechanized_equipment > 6.5 } }
+					add_equipment_production = { equipment = { type = mechanized_equipment_3 } requested_factories = 7 amount = fo_amount_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_mechanized_equipment > 5.5 } }
+					add_equipment_production = { equipment = { type = mechanized_equipment_3 } requested_factories = 6 amount = fo_amount_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_mechanized_equipment > 4.5 } }
+					add_equipment_production = { equipment = { type = mechanized_equipment_3 } requested_factories = 5 amount = fo_amount_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_mechanized_equipment > 3.5 } }
+					add_equipment_production = { equipment = { type = mechanized_equipment_3 } requested_factories = 4 amount = fo_amount_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_mechanized_equipment > 2.5 } }
+					add_equipment_production = { equipment = { type = mechanized_equipment_3 } requested_factories = 3 amount = fo_amount_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_mechanized_equipment > 1.5 } }
+					add_equipment_production = { equipment = { type = mechanized_equipment_3 } requested_factories = 2 amount = fo_amount_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_mechanized_equipment > 0.5 } }
+					add_equipment_production = { equipment = { type = mechanized_equipment_3 } requested_factories = 1 amount = fo_amount_mechanized_equipment }
+				}
+			}
+			else_if = { limit = { has_tech = mechanised_infantry2 }
+				if = { limit = { check_variable = { fo_share_mechanized_equipment > 14.5 } }
+					add_equipment_production = { equipment = { type = mechanized_equipment_2 } requested_factories = 15 amount = fo_amount_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_mechanized_equipment > 13.5 } }
+					add_equipment_production = { equipment = { type = mechanized_equipment_2 } requested_factories = 14 amount = fo_amount_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_mechanized_equipment > 12.5 } }
+					add_equipment_production = { equipment = { type = mechanized_equipment_2 } requested_factories = 13 amount = fo_amount_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_mechanized_equipment > 11.5 } }
+					add_equipment_production = { equipment = { type = mechanized_equipment_2 } requested_factories = 12 amount = fo_amount_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_mechanized_equipment > 10.5 } }
+					add_equipment_production = { equipment = { type = mechanized_equipment_2 } requested_factories = 11 amount = fo_amount_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_mechanized_equipment > 9.5 } }
+					add_equipment_production = { equipment = { type = mechanized_equipment_2 } requested_factories = 10 amount = fo_amount_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_mechanized_equipment > 8.5 } }
+					add_equipment_production = { equipment = { type = mechanized_equipment_2 } requested_factories = 9 amount = fo_amount_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_mechanized_equipment > 7.5 } }
+					add_equipment_production = { equipment = { type = mechanized_equipment_2 } requested_factories = 8 amount = fo_amount_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_mechanized_equipment > 6.5 } }
+					add_equipment_production = { equipment = { type = mechanized_equipment_2 } requested_factories = 7 amount = fo_amount_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_mechanized_equipment > 5.5 } }
+					add_equipment_production = { equipment = { type = mechanized_equipment_2 } requested_factories = 6 amount = fo_amount_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_mechanized_equipment > 4.5 } }
+					add_equipment_production = { equipment = { type = mechanized_equipment_2 } requested_factories = 5 amount = fo_amount_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_mechanized_equipment > 3.5 } }
+					add_equipment_production = { equipment = { type = mechanized_equipment_2 } requested_factories = 4 amount = fo_amount_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_mechanized_equipment > 2.5 } }
+					add_equipment_production = { equipment = { type = mechanized_equipment_2 } requested_factories = 3 amount = fo_amount_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_mechanized_equipment > 1.5 } }
+					add_equipment_production = { equipment = { type = mechanized_equipment_2 } requested_factories = 2 amount = fo_amount_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_mechanized_equipment > 0.5 } }
+					add_equipment_production = { equipment = { type = mechanized_equipment_2 } requested_factories = 1 amount = fo_amount_mechanized_equipment }
+				}
+			}
+			else_if = { limit = { has_tech = mechanised_infantry }
+				if = { limit = { check_variable = { fo_share_mechanized_equipment > 14.5 } }
+					add_equipment_production = { equipment = { type = mechanized_equipment_1 } requested_factories = 15 amount = fo_amount_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_mechanized_equipment > 13.5 } }
+					add_equipment_production = { equipment = { type = mechanized_equipment_1 } requested_factories = 14 amount = fo_amount_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_mechanized_equipment > 12.5 } }
+					add_equipment_production = { equipment = { type = mechanized_equipment_1 } requested_factories = 13 amount = fo_amount_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_mechanized_equipment > 11.5 } }
+					add_equipment_production = { equipment = { type = mechanized_equipment_1 } requested_factories = 12 amount = fo_amount_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_mechanized_equipment > 10.5 } }
+					add_equipment_production = { equipment = { type = mechanized_equipment_1 } requested_factories = 11 amount = fo_amount_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_mechanized_equipment > 9.5 } }
+					add_equipment_production = { equipment = { type = mechanized_equipment_1 } requested_factories = 10 amount = fo_amount_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_mechanized_equipment > 8.5 } }
+					add_equipment_production = { equipment = { type = mechanized_equipment_1 } requested_factories = 9 amount = fo_amount_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_mechanized_equipment > 7.5 } }
+					add_equipment_production = { equipment = { type = mechanized_equipment_1 } requested_factories = 8 amount = fo_amount_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_mechanized_equipment > 6.5 } }
+					add_equipment_production = { equipment = { type = mechanized_equipment_1 } requested_factories = 7 amount = fo_amount_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_mechanized_equipment > 5.5 } }
+					add_equipment_production = { equipment = { type = mechanized_equipment_1 } requested_factories = 6 amount = fo_amount_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_mechanized_equipment > 4.5 } }
+					add_equipment_production = { equipment = { type = mechanized_equipment_1 } requested_factories = 5 amount = fo_amount_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_mechanized_equipment > 3.5 } }
+					add_equipment_production = { equipment = { type = mechanized_equipment_1 } requested_factories = 4 amount = fo_amount_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_mechanized_equipment > 2.5 } }
+					add_equipment_production = { equipment = { type = mechanized_equipment_1 } requested_factories = 3 amount = fo_amount_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_mechanized_equipment > 1.5 } }
+					add_equipment_production = { equipment = { type = mechanized_equipment_1 } requested_factories = 2 amount = fo_amount_mechanized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_mechanized_equipment > 0.5 } }
+					add_equipment_production = { equipment = { type = mechanized_equipment_1 } requested_factories = 1 amount = fo_amount_mechanized_equipment }
+				}
+			}
+		}
+		if = { limit = { check_variable = { fo_share_motorbike_equipment > 0.5 } check_variable = { fo_def_motorbike_equipment > 0.5 } }
+			set_variable = { fo_plan_motorbike_equipment = fo_share_motorbike_equipment }
+			set_variable = { fo_amount_motorbike_equipment = fo_def_motorbike_equipment }
+			if = { limit = { has_tech = sp_armored_motorized_military_police_tech }
+				if = { limit = { check_variable = { fo_share_motorbike_equipment > 14.5 } }
+					add_equipment_production = { equipment = { type = motorbike_equipment_1 } requested_factories = 15 amount = fo_amount_motorbike_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorbike_equipment > 13.5 } }
+					add_equipment_production = { equipment = { type = motorbike_equipment_1 } requested_factories = 14 amount = fo_amount_motorbike_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorbike_equipment > 12.5 } }
+					add_equipment_production = { equipment = { type = motorbike_equipment_1 } requested_factories = 13 amount = fo_amount_motorbike_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorbike_equipment > 11.5 } }
+					add_equipment_production = { equipment = { type = motorbike_equipment_1 } requested_factories = 12 amount = fo_amount_motorbike_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorbike_equipment > 10.5 } }
+					add_equipment_production = { equipment = { type = motorbike_equipment_1 } requested_factories = 11 amount = fo_amount_motorbike_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorbike_equipment > 9.5 } }
+					add_equipment_production = { equipment = { type = motorbike_equipment_1 } requested_factories = 10 amount = fo_amount_motorbike_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorbike_equipment > 8.5 } }
+					add_equipment_production = { equipment = { type = motorbike_equipment_1 } requested_factories = 9 amount = fo_amount_motorbike_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorbike_equipment > 7.5 } }
+					add_equipment_production = { equipment = { type = motorbike_equipment_1 } requested_factories = 8 amount = fo_amount_motorbike_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorbike_equipment > 6.5 } }
+					add_equipment_production = { equipment = { type = motorbike_equipment_1 } requested_factories = 7 amount = fo_amount_motorbike_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorbike_equipment > 5.5 } }
+					add_equipment_production = { equipment = { type = motorbike_equipment_1 } requested_factories = 6 amount = fo_amount_motorbike_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorbike_equipment > 4.5 } }
+					add_equipment_production = { equipment = { type = motorbike_equipment_1 } requested_factories = 5 amount = fo_amount_motorbike_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorbike_equipment > 3.5 } }
+					add_equipment_production = { equipment = { type = motorbike_equipment_1 } requested_factories = 4 amount = fo_amount_motorbike_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorbike_equipment > 2.5 } }
+					add_equipment_production = { equipment = { type = motorbike_equipment_1 } requested_factories = 3 amount = fo_amount_motorbike_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorbike_equipment > 1.5 } }
+					add_equipment_production = { equipment = { type = motorbike_equipment_1 } requested_factories = 2 amount = fo_amount_motorbike_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorbike_equipment > 0.5 } }
+					add_equipment_production = { equipment = { type = motorbike_equipment_1 } requested_factories = 1 amount = fo_amount_motorbike_equipment }
+				}
+			}
+		}
+		if = { limit = { check_variable = { fo_share_motorized_equipment > 0.5 } check_variable = { fo_def_motorized_equipment > 0.5 } }
+			set_variable = { fo_plan_motorized_equipment = fo_share_motorized_equipment }
+			set_variable = { fo_amount_motorized_equipment = fo_def_motorized_equipment }
+			if = { limit = { has_tech = motorised_infantry }
+				if = { limit = { check_variable = { fo_share_motorized_equipment > 14.5 } }
+					add_equipment_production = { equipment = { type = motorized_equipment_1 } requested_factories = 15 amount = fo_amount_motorized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorized_equipment > 13.5 } }
+					add_equipment_production = { equipment = { type = motorized_equipment_1 } requested_factories = 14 amount = fo_amount_motorized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorized_equipment > 12.5 } }
+					add_equipment_production = { equipment = { type = motorized_equipment_1 } requested_factories = 13 amount = fo_amount_motorized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorized_equipment > 11.5 } }
+					add_equipment_production = { equipment = { type = motorized_equipment_1 } requested_factories = 12 amount = fo_amount_motorized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorized_equipment > 10.5 } }
+					add_equipment_production = { equipment = { type = motorized_equipment_1 } requested_factories = 11 amount = fo_amount_motorized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorized_equipment > 9.5 } }
+					add_equipment_production = { equipment = { type = motorized_equipment_1 } requested_factories = 10 amount = fo_amount_motorized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorized_equipment > 8.5 } }
+					add_equipment_production = { equipment = { type = motorized_equipment_1 } requested_factories = 9 amount = fo_amount_motorized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorized_equipment > 7.5 } }
+					add_equipment_production = { equipment = { type = motorized_equipment_1 } requested_factories = 8 amount = fo_amount_motorized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorized_equipment > 6.5 } }
+					add_equipment_production = { equipment = { type = motorized_equipment_1 } requested_factories = 7 amount = fo_amount_motorized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorized_equipment > 5.5 } }
+					add_equipment_production = { equipment = { type = motorized_equipment_1 } requested_factories = 6 amount = fo_amount_motorized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorized_equipment > 4.5 } }
+					add_equipment_production = { equipment = { type = motorized_equipment_1 } requested_factories = 5 amount = fo_amount_motorized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorized_equipment > 3.5 } }
+					add_equipment_production = { equipment = { type = motorized_equipment_1 } requested_factories = 4 amount = fo_amount_motorized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorized_equipment > 2.5 } }
+					add_equipment_production = { equipment = { type = motorized_equipment_1 } requested_factories = 3 amount = fo_amount_motorized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorized_equipment > 1.5 } }
+					add_equipment_production = { equipment = { type = motorized_equipment_1 } requested_factories = 2 amount = fo_amount_motorized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorized_equipment > 0.5 } }
+					add_equipment_production = { equipment = { type = motorized_equipment_1 } requested_factories = 1 amount = fo_amount_motorized_equipment }
+				}
+			}
+			else_if = { limit = { has_tech = tech_trucks }
+				if = { limit = { check_variable = { fo_share_motorized_equipment > 14.5 } }
+					add_equipment_production = { equipment = { type = motorized_equipment_0 } requested_factories = 15 amount = fo_amount_motorized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorized_equipment > 13.5 } }
+					add_equipment_production = { equipment = { type = motorized_equipment_0 } requested_factories = 14 amount = fo_amount_motorized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorized_equipment > 12.5 } }
+					add_equipment_production = { equipment = { type = motorized_equipment_0 } requested_factories = 13 amount = fo_amount_motorized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorized_equipment > 11.5 } }
+					add_equipment_production = { equipment = { type = motorized_equipment_0 } requested_factories = 12 amount = fo_amount_motorized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorized_equipment > 10.5 } }
+					add_equipment_production = { equipment = { type = motorized_equipment_0 } requested_factories = 11 amount = fo_amount_motorized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorized_equipment > 9.5 } }
+					add_equipment_production = { equipment = { type = motorized_equipment_0 } requested_factories = 10 amount = fo_amount_motorized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorized_equipment > 8.5 } }
+					add_equipment_production = { equipment = { type = motorized_equipment_0 } requested_factories = 9 amount = fo_amount_motorized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorized_equipment > 7.5 } }
+					add_equipment_production = { equipment = { type = motorized_equipment_0 } requested_factories = 8 amount = fo_amount_motorized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorized_equipment > 6.5 } }
+					add_equipment_production = { equipment = { type = motorized_equipment_0 } requested_factories = 7 amount = fo_amount_motorized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorized_equipment > 5.5 } }
+					add_equipment_production = { equipment = { type = motorized_equipment_0 } requested_factories = 6 amount = fo_amount_motorized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorized_equipment > 4.5 } }
+					add_equipment_production = { equipment = { type = motorized_equipment_0 } requested_factories = 5 amount = fo_amount_motorized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorized_equipment > 3.5 } }
+					add_equipment_production = { equipment = { type = motorized_equipment_0 } requested_factories = 4 amount = fo_amount_motorized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorized_equipment > 2.5 } }
+					add_equipment_production = { equipment = { type = motorized_equipment_0 } requested_factories = 3 amount = fo_amount_motorized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorized_equipment > 1.5 } }
+					add_equipment_production = { equipment = { type = motorized_equipment_0 } requested_factories = 2 amount = fo_amount_motorized_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorized_equipment > 0.5 } }
+					add_equipment_production = { equipment = { type = motorized_equipment_0 } requested_factories = 1 amount = fo_amount_motorized_equipment }
+				}
+			}
+		}
+		if = { limit = { check_variable = { fo_share_motorized_rocket_equipment > 0.5 } check_variable = { fo_def_motorized_rocket_equipment > 0.5 } }
+			set_variable = { fo_plan_motorized_rocket_equipment = fo_share_motorized_rocket_equipment }
+			set_variable = { fo_amount_motorized_rocket_equipment = fo_def_motorized_rocket_equipment }
+			if = { limit = { has_tech = motorized_rocket_unit }
+				if = { limit = { check_variable = { fo_share_motorized_rocket_equipment > 14.5 } }
+					add_equipment_production = { equipment = { type = motorized_rocket_equipment_1 } requested_factories = 15 amount = fo_amount_motorized_rocket_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorized_rocket_equipment > 13.5 } }
+					add_equipment_production = { equipment = { type = motorized_rocket_equipment_1 } requested_factories = 14 amount = fo_amount_motorized_rocket_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorized_rocket_equipment > 12.5 } }
+					add_equipment_production = { equipment = { type = motorized_rocket_equipment_1 } requested_factories = 13 amount = fo_amount_motorized_rocket_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorized_rocket_equipment > 11.5 } }
+					add_equipment_production = { equipment = { type = motorized_rocket_equipment_1 } requested_factories = 12 amount = fo_amount_motorized_rocket_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorized_rocket_equipment > 10.5 } }
+					add_equipment_production = { equipment = { type = motorized_rocket_equipment_1 } requested_factories = 11 amount = fo_amount_motorized_rocket_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorized_rocket_equipment > 9.5 } }
+					add_equipment_production = { equipment = { type = motorized_rocket_equipment_1 } requested_factories = 10 amount = fo_amount_motorized_rocket_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorized_rocket_equipment > 8.5 } }
+					add_equipment_production = { equipment = { type = motorized_rocket_equipment_1 } requested_factories = 9 amount = fo_amount_motorized_rocket_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorized_rocket_equipment > 7.5 } }
+					add_equipment_production = { equipment = { type = motorized_rocket_equipment_1 } requested_factories = 8 amount = fo_amount_motorized_rocket_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorized_rocket_equipment > 6.5 } }
+					add_equipment_production = { equipment = { type = motorized_rocket_equipment_1 } requested_factories = 7 amount = fo_amount_motorized_rocket_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorized_rocket_equipment > 5.5 } }
+					add_equipment_production = { equipment = { type = motorized_rocket_equipment_1 } requested_factories = 6 amount = fo_amount_motorized_rocket_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorized_rocket_equipment > 4.5 } }
+					add_equipment_production = { equipment = { type = motorized_rocket_equipment_1 } requested_factories = 5 amount = fo_amount_motorized_rocket_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorized_rocket_equipment > 3.5 } }
+					add_equipment_production = { equipment = { type = motorized_rocket_equipment_1 } requested_factories = 4 amount = fo_amount_motorized_rocket_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorized_rocket_equipment > 2.5 } }
+					add_equipment_production = { equipment = { type = motorized_rocket_equipment_1 } requested_factories = 3 amount = fo_amount_motorized_rocket_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorized_rocket_equipment > 1.5 } }
+					add_equipment_production = { equipment = { type = motorized_rocket_equipment_1 } requested_factories = 2 amount = fo_amount_motorized_rocket_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_motorized_rocket_equipment > 0.5 } }
+					add_equipment_production = { equipment = { type = motorized_rocket_equipment_1 } requested_factories = 1 amount = fo_amount_motorized_rocket_equipment }
+				}
+			}
+		}
+		if = { limit = { check_variable = { fo_share_railway_gun_equipment > 0.5 } check_variable = { fo_def_railway_gun_equipment > 0.5 } }
+			set_variable = { fo_plan_railway_gun_equipment = fo_share_railway_gun_equipment }
+			set_variable = { fo_amount_railway_gun_equipment = fo_def_railway_gun_equipment }
+			if = { limit = { has_tech = railway_gun }
+				if = { limit = { check_variable = { fo_share_railway_gun_equipment > 14.5 } }
+					add_equipment_production = { equipment = { type = railway_gun_equipment_1 } requested_factories = 15 amount = fo_amount_railway_gun_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_railway_gun_equipment > 13.5 } }
+					add_equipment_production = { equipment = { type = railway_gun_equipment_1 } requested_factories = 14 amount = fo_amount_railway_gun_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_railway_gun_equipment > 12.5 } }
+					add_equipment_production = { equipment = { type = railway_gun_equipment_1 } requested_factories = 13 amount = fo_amount_railway_gun_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_railway_gun_equipment > 11.5 } }
+					add_equipment_production = { equipment = { type = railway_gun_equipment_1 } requested_factories = 12 amount = fo_amount_railway_gun_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_railway_gun_equipment > 10.5 } }
+					add_equipment_production = { equipment = { type = railway_gun_equipment_1 } requested_factories = 11 amount = fo_amount_railway_gun_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_railway_gun_equipment > 9.5 } }
+					add_equipment_production = { equipment = { type = railway_gun_equipment_1 } requested_factories = 10 amount = fo_amount_railway_gun_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_railway_gun_equipment > 8.5 } }
+					add_equipment_production = { equipment = { type = railway_gun_equipment_1 } requested_factories = 9 amount = fo_amount_railway_gun_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_railway_gun_equipment > 7.5 } }
+					add_equipment_production = { equipment = { type = railway_gun_equipment_1 } requested_factories = 8 amount = fo_amount_railway_gun_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_railway_gun_equipment > 6.5 } }
+					add_equipment_production = { equipment = { type = railway_gun_equipment_1 } requested_factories = 7 amount = fo_amount_railway_gun_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_railway_gun_equipment > 5.5 } }
+					add_equipment_production = { equipment = { type = railway_gun_equipment_1 } requested_factories = 6 amount = fo_amount_railway_gun_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_railway_gun_equipment > 4.5 } }
+					add_equipment_production = { equipment = { type = railway_gun_equipment_1 } requested_factories = 5 amount = fo_amount_railway_gun_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_railway_gun_equipment > 3.5 } }
+					add_equipment_production = { equipment = { type = railway_gun_equipment_1 } requested_factories = 4 amount = fo_amount_railway_gun_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_railway_gun_equipment > 2.5 } }
+					add_equipment_production = { equipment = { type = railway_gun_equipment_1 } requested_factories = 3 amount = fo_amount_railway_gun_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_railway_gun_equipment > 1.5 } }
+					add_equipment_production = { equipment = { type = railway_gun_equipment_1 } requested_factories = 2 amount = fo_amount_railway_gun_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_railway_gun_equipment > 0.5 } }
+					add_equipment_production = { equipment = { type = railway_gun_equipment_1 } requested_factories = 1 amount = fo_amount_railway_gun_equipment }
+				}
+			}
+		}
+		if = { limit = { check_variable = { fo_share_rocket_artillery_equipment > 0.5 } check_variable = { fo_def_rocket_artillery_equipment > 0.5 } }
+			set_variable = { fo_plan_rocket_artillery_equipment = fo_share_rocket_artillery_equipment }
+			set_variable = { fo_amount_rocket_artillery_equipment = fo_def_rocket_artillery_equipment }
+			if = { limit = { has_tech = rocket_artillery4 }
+				if = { limit = { check_variable = { fo_share_rocket_artillery_equipment > 14.5 } }
+					add_equipment_production = { equipment = { type = rocket_artillery_equipment_2 } requested_factories = 15 amount = fo_amount_rocket_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_rocket_artillery_equipment > 13.5 } }
+					add_equipment_production = { equipment = { type = rocket_artillery_equipment_2 } requested_factories = 14 amount = fo_amount_rocket_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_rocket_artillery_equipment > 12.5 } }
+					add_equipment_production = { equipment = { type = rocket_artillery_equipment_2 } requested_factories = 13 amount = fo_amount_rocket_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_rocket_artillery_equipment > 11.5 } }
+					add_equipment_production = { equipment = { type = rocket_artillery_equipment_2 } requested_factories = 12 amount = fo_amount_rocket_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_rocket_artillery_equipment > 10.5 } }
+					add_equipment_production = { equipment = { type = rocket_artillery_equipment_2 } requested_factories = 11 amount = fo_amount_rocket_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_rocket_artillery_equipment > 9.5 } }
+					add_equipment_production = { equipment = { type = rocket_artillery_equipment_2 } requested_factories = 10 amount = fo_amount_rocket_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_rocket_artillery_equipment > 8.5 } }
+					add_equipment_production = { equipment = { type = rocket_artillery_equipment_2 } requested_factories = 9 amount = fo_amount_rocket_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_rocket_artillery_equipment > 7.5 } }
+					add_equipment_production = { equipment = { type = rocket_artillery_equipment_2 } requested_factories = 8 amount = fo_amount_rocket_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_rocket_artillery_equipment > 6.5 } }
+					add_equipment_production = { equipment = { type = rocket_artillery_equipment_2 } requested_factories = 7 amount = fo_amount_rocket_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_rocket_artillery_equipment > 5.5 } }
+					add_equipment_production = { equipment = { type = rocket_artillery_equipment_2 } requested_factories = 6 amount = fo_amount_rocket_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_rocket_artillery_equipment > 4.5 } }
+					add_equipment_production = { equipment = { type = rocket_artillery_equipment_2 } requested_factories = 5 amount = fo_amount_rocket_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_rocket_artillery_equipment > 3.5 } }
+					add_equipment_production = { equipment = { type = rocket_artillery_equipment_2 } requested_factories = 4 amount = fo_amount_rocket_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_rocket_artillery_equipment > 2.5 } }
+					add_equipment_production = { equipment = { type = rocket_artillery_equipment_2 } requested_factories = 3 amount = fo_amount_rocket_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_rocket_artillery_equipment > 1.5 } }
+					add_equipment_production = { equipment = { type = rocket_artillery_equipment_2 } requested_factories = 2 amount = fo_amount_rocket_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_rocket_artillery_equipment > 0.5 } }
+					add_equipment_production = { equipment = { type = rocket_artillery_equipment_2 } requested_factories = 1 amount = fo_amount_rocket_artillery_equipment }
+				}
+			}
+			else_if = { limit = { has_tech = rocket_artillery }
+				if = { limit = { check_variable = { fo_share_rocket_artillery_equipment > 14.5 } }
+					add_equipment_production = { equipment = { type = rocket_artillery_equipment_1 } requested_factories = 15 amount = fo_amount_rocket_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_rocket_artillery_equipment > 13.5 } }
+					add_equipment_production = { equipment = { type = rocket_artillery_equipment_1 } requested_factories = 14 amount = fo_amount_rocket_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_rocket_artillery_equipment > 12.5 } }
+					add_equipment_production = { equipment = { type = rocket_artillery_equipment_1 } requested_factories = 13 amount = fo_amount_rocket_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_rocket_artillery_equipment > 11.5 } }
+					add_equipment_production = { equipment = { type = rocket_artillery_equipment_1 } requested_factories = 12 amount = fo_amount_rocket_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_rocket_artillery_equipment > 10.5 } }
+					add_equipment_production = { equipment = { type = rocket_artillery_equipment_1 } requested_factories = 11 amount = fo_amount_rocket_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_rocket_artillery_equipment > 9.5 } }
+					add_equipment_production = { equipment = { type = rocket_artillery_equipment_1 } requested_factories = 10 amount = fo_amount_rocket_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_rocket_artillery_equipment > 8.5 } }
+					add_equipment_production = { equipment = { type = rocket_artillery_equipment_1 } requested_factories = 9 amount = fo_amount_rocket_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_rocket_artillery_equipment > 7.5 } }
+					add_equipment_production = { equipment = { type = rocket_artillery_equipment_1 } requested_factories = 8 amount = fo_amount_rocket_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_rocket_artillery_equipment > 6.5 } }
+					add_equipment_production = { equipment = { type = rocket_artillery_equipment_1 } requested_factories = 7 amount = fo_amount_rocket_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_rocket_artillery_equipment > 5.5 } }
+					add_equipment_production = { equipment = { type = rocket_artillery_equipment_1 } requested_factories = 6 amount = fo_amount_rocket_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_rocket_artillery_equipment > 4.5 } }
+					add_equipment_production = { equipment = { type = rocket_artillery_equipment_1 } requested_factories = 5 amount = fo_amount_rocket_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_rocket_artillery_equipment > 3.5 } }
+					add_equipment_production = { equipment = { type = rocket_artillery_equipment_1 } requested_factories = 4 amount = fo_amount_rocket_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_rocket_artillery_equipment > 2.5 } }
+					add_equipment_production = { equipment = { type = rocket_artillery_equipment_1 } requested_factories = 3 amount = fo_amount_rocket_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_rocket_artillery_equipment > 1.5 } }
+					add_equipment_production = { equipment = { type = rocket_artillery_equipment_1 } requested_factories = 2 amount = fo_amount_rocket_artillery_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_rocket_artillery_equipment > 0.5 } }
+					add_equipment_production = { equipment = { type = rocket_artillery_equipment_1 } requested_factories = 1 amount = fo_amount_rocket_artillery_equipment }
+				}
+			}
+		}
+		if = { limit = { check_variable = { fo_share_support_equipment > 0.5 } check_variable = { fo_def_support_equipment > 0.5 } }
+			set_variable = { fo_plan_support_equipment = fo_share_support_equipment }
+			set_variable = { fo_amount_support_equipment = fo_def_support_equipment }
+			if = { limit = { has_tech = tech_support }
+				if = { limit = { check_variable = { fo_share_support_equipment > 14.5 } }
+					add_equipment_production = { equipment = { type = support_equipment_1 } requested_factories = 15 amount = fo_amount_support_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_support_equipment > 13.5 } }
+					add_equipment_production = { equipment = { type = support_equipment_1 } requested_factories = 14 amount = fo_amount_support_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_support_equipment > 12.5 } }
+					add_equipment_production = { equipment = { type = support_equipment_1 } requested_factories = 13 amount = fo_amount_support_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_support_equipment > 11.5 } }
+					add_equipment_production = { equipment = { type = support_equipment_1 } requested_factories = 12 amount = fo_amount_support_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_support_equipment > 10.5 } }
+					add_equipment_production = { equipment = { type = support_equipment_1 } requested_factories = 11 amount = fo_amount_support_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_support_equipment > 9.5 } }
+					add_equipment_production = { equipment = { type = support_equipment_1 } requested_factories = 10 amount = fo_amount_support_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_support_equipment > 8.5 } }
+					add_equipment_production = { equipment = { type = support_equipment_1 } requested_factories = 9 amount = fo_amount_support_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_support_equipment > 7.5 } }
+					add_equipment_production = { equipment = { type = support_equipment_1 } requested_factories = 8 amount = fo_amount_support_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_support_equipment > 6.5 } }
+					add_equipment_production = { equipment = { type = support_equipment_1 } requested_factories = 7 amount = fo_amount_support_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_support_equipment > 5.5 } }
+					add_equipment_production = { equipment = { type = support_equipment_1 } requested_factories = 6 amount = fo_amount_support_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_support_equipment > 4.5 } }
+					add_equipment_production = { equipment = { type = support_equipment_1 } requested_factories = 5 amount = fo_amount_support_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_support_equipment > 3.5 } }
+					add_equipment_production = { equipment = { type = support_equipment_1 } requested_factories = 4 amount = fo_amount_support_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_support_equipment > 2.5 } }
+					add_equipment_production = { equipment = { type = support_equipment_1 } requested_factories = 3 amount = fo_amount_support_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_support_equipment > 1.5 } }
+					add_equipment_production = { equipment = { type = support_equipment_1 } requested_factories = 2 amount = fo_amount_support_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_support_equipment > 0.5 } }
+					add_equipment_production = { equipment = { type = support_equipment_1 } requested_factories = 1 amount = fo_amount_support_equipment }
+				}
+			}
+		}
+		if = { limit = { check_variable = { fo_share_train_equipment > 0.5 } check_variable = { fo_def_train_equipment > 0.5 } }
+			set_variable = { fo_plan_train_equipment = fo_share_train_equipment }
+			set_variable = { fo_amount_train_equipment = fo_def_train_equipment }
+			if = { limit = { has_tech = wartime_train }
+				if = { limit = { check_variable = { fo_share_train_equipment > 14.5 } }
+					add_equipment_production = { equipment = { type = train_equipment_2 } requested_factories = 15 amount = fo_amount_train_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_train_equipment > 13.5 } }
+					add_equipment_production = { equipment = { type = train_equipment_2 } requested_factories = 14 amount = fo_amount_train_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_train_equipment > 12.5 } }
+					add_equipment_production = { equipment = { type = train_equipment_2 } requested_factories = 13 amount = fo_amount_train_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_train_equipment > 11.5 } }
+					add_equipment_production = { equipment = { type = train_equipment_2 } requested_factories = 12 amount = fo_amount_train_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_train_equipment > 10.5 } }
+					add_equipment_production = { equipment = { type = train_equipment_2 } requested_factories = 11 amount = fo_amount_train_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_train_equipment > 9.5 } }
+					add_equipment_production = { equipment = { type = train_equipment_2 } requested_factories = 10 amount = fo_amount_train_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_train_equipment > 8.5 } }
+					add_equipment_production = { equipment = { type = train_equipment_2 } requested_factories = 9 amount = fo_amount_train_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_train_equipment > 7.5 } }
+					add_equipment_production = { equipment = { type = train_equipment_2 } requested_factories = 8 amount = fo_amount_train_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_train_equipment > 6.5 } }
+					add_equipment_production = { equipment = { type = train_equipment_2 } requested_factories = 7 amount = fo_amount_train_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_train_equipment > 5.5 } }
+					add_equipment_production = { equipment = { type = train_equipment_2 } requested_factories = 6 amount = fo_amount_train_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_train_equipment > 4.5 } }
+					add_equipment_production = { equipment = { type = train_equipment_2 } requested_factories = 5 amount = fo_amount_train_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_train_equipment > 3.5 } }
+					add_equipment_production = { equipment = { type = train_equipment_2 } requested_factories = 4 amount = fo_amount_train_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_train_equipment > 2.5 } }
+					add_equipment_production = { equipment = { type = train_equipment_2 } requested_factories = 3 amount = fo_amount_train_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_train_equipment > 1.5 } }
+					add_equipment_production = { equipment = { type = train_equipment_2 } requested_factories = 2 amount = fo_amount_train_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_train_equipment > 0.5 } }
+					add_equipment_production = { equipment = { type = train_equipment_2 } requested_factories = 1 amount = fo_amount_train_equipment }
+				}
+			}
+			else_if = { limit = { has_tech = armored_train }
+				if = { limit = { check_variable = { fo_share_train_equipment > 14.5 } }
+					add_equipment_production = { equipment = { type = train_equipment_3 } requested_factories = 15 amount = fo_amount_train_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_train_equipment > 13.5 } }
+					add_equipment_production = { equipment = { type = train_equipment_3 } requested_factories = 14 amount = fo_amount_train_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_train_equipment > 12.5 } }
+					add_equipment_production = { equipment = { type = train_equipment_3 } requested_factories = 13 amount = fo_amount_train_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_train_equipment > 11.5 } }
+					add_equipment_production = { equipment = { type = train_equipment_3 } requested_factories = 12 amount = fo_amount_train_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_train_equipment > 10.5 } }
+					add_equipment_production = { equipment = { type = train_equipment_3 } requested_factories = 11 amount = fo_amount_train_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_train_equipment > 9.5 } }
+					add_equipment_production = { equipment = { type = train_equipment_3 } requested_factories = 10 amount = fo_amount_train_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_train_equipment > 8.5 } }
+					add_equipment_production = { equipment = { type = train_equipment_3 } requested_factories = 9 amount = fo_amount_train_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_train_equipment > 7.5 } }
+					add_equipment_production = { equipment = { type = train_equipment_3 } requested_factories = 8 amount = fo_amount_train_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_train_equipment > 6.5 } }
+					add_equipment_production = { equipment = { type = train_equipment_3 } requested_factories = 7 amount = fo_amount_train_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_train_equipment > 5.5 } }
+					add_equipment_production = { equipment = { type = train_equipment_3 } requested_factories = 6 amount = fo_amount_train_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_train_equipment > 4.5 } }
+					add_equipment_production = { equipment = { type = train_equipment_3 } requested_factories = 5 amount = fo_amount_train_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_train_equipment > 3.5 } }
+					add_equipment_production = { equipment = { type = train_equipment_3 } requested_factories = 4 amount = fo_amount_train_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_train_equipment > 2.5 } }
+					add_equipment_production = { equipment = { type = train_equipment_3 } requested_factories = 3 amount = fo_amount_train_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_train_equipment > 1.5 } }
+					add_equipment_production = { equipment = { type = train_equipment_3 } requested_factories = 2 amount = fo_amount_train_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_train_equipment > 0.5 } }
+					add_equipment_production = { equipment = { type = train_equipment_3 } requested_factories = 1 amount = fo_amount_train_equipment }
+				}
+			}
+			else_if = { limit = { has_tech = basic_train }
+				if = { limit = { check_variable = { fo_share_train_equipment > 14.5 } }
+					add_equipment_production = { equipment = { type = train_equipment_1 } requested_factories = 15 amount = fo_amount_train_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_train_equipment > 13.5 } }
+					add_equipment_production = { equipment = { type = train_equipment_1 } requested_factories = 14 amount = fo_amount_train_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_train_equipment > 12.5 } }
+					add_equipment_production = { equipment = { type = train_equipment_1 } requested_factories = 13 amount = fo_amount_train_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_train_equipment > 11.5 } }
+					add_equipment_production = { equipment = { type = train_equipment_1 } requested_factories = 12 amount = fo_amount_train_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_train_equipment > 10.5 } }
+					add_equipment_production = { equipment = { type = train_equipment_1 } requested_factories = 11 amount = fo_amount_train_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_train_equipment > 9.5 } }
+					add_equipment_production = { equipment = { type = train_equipment_1 } requested_factories = 10 amount = fo_amount_train_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_train_equipment > 8.5 } }
+					add_equipment_production = { equipment = { type = train_equipment_1 } requested_factories = 9 amount = fo_amount_train_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_train_equipment > 7.5 } }
+					add_equipment_production = { equipment = { type = train_equipment_1 } requested_factories = 8 amount = fo_amount_train_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_train_equipment > 6.5 } }
+					add_equipment_production = { equipment = { type = train_equipment_1 } requested_factories = 7 amount = fo_amount_train_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_train_equipment > 5.5 } }
+					add_equipment_production = { equipment = { type = train_equipment_1 } requested_factories = 6 amount = fo_amount_train_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_train_equipment > 4.5 } }
+					add_equipment_production = { equipment = { type = train_equipment_1 } requested_factories = 5 amount = fo_amount_train_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_train_equipment > 3.5 } }
+					add_equipment_production = { equipment = { type = train_equipment_1 } requested_factories = 4 amount = fo_amount_train_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_train_equipment > 2.5 } }
+					add_equipment_production = { equipment = { type = train_equipment_1 } requested_factories = 3 amount = fo_amount_train_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_train_equipment > 1.5 } }
+					add_equipment_production = { equipment = { type = train_equipment_1 } requested_factories = 2 amount = fo_amount_train_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_train_equipment > 0.5 } }
+					add_equipment_production = { equipment = { type = train_equipment_1 } requested_factories = 1 amount = fo_amount_train_equipment }
+				}
+			}
+		}
+		if = { limit = { check_variable = { fo_share_transport_plane_equipment > 0.5 } check_variable = { fo_def_transport_plane_equipment > 0.5 } }
+			set_variable = { fo_plan_transport_plane_equipment = fo_share_transport_plane_equipment }
+			set_variable = { fo_amount_transport_plane_equipment = fo_def_transport_plane_equipment }
+			if = { limit = { OR = { has_tech = strategic_airlifter has_tech = bba_strategic_airlifter } }
+				if = { limit = { check_variable = { fo_share_transport_plane_equipment > 14.5 } }
+					add_equipment_production = { equipment = { type = transport_plane_equipment_3 } requested_factories = 15 amount = fo_amount_transport_plane_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_transport_plane_equipment > 13.5 } }
+					add_equipment_production = { equipment = { type = transport_plane_equipment_3 } requested_factories = 14 amount = fo_amount_transport_plane_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_transport_plane_equipment > 12.5 } }
+					add_equipment_production = { equipment = { type = transport_plane_equipment_3 } requested_factories = 13 amount = fo_amount_transport_plane_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_transport_plane_equipment > 11.5 } }
+					add_equipment_production = { equipment = { type = transport_plane_equipment_3 } requested_factories = 12 amount = fo_amount_transport_plane_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_transport_plane_equipment > 10.5 } }
+					add_equipment_production = { equipment = { type = transport_plane_equipment_3 } requested_factories = 11 amount = fo_amount_transport_plane_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_transport_plane_equipment > 9.5 } }
+					add_equipment_production = { equipment = { type = transport_plane_equipment_3 } requested_factories = 10 amount = fo_amount_transport_plane_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_transport_plane_equipment > 8.5 } }
+					add_equipment_production = { equipment = { type = transport_plane_equipment_3 } requested_factories = 9 amount = fo_amount_transport_plane_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_transport_plane_equipment > 7.5 } }
+					add_equipment_production = { equipment = { type = transport_plane_equipment_3 } requested_factories = 8 amount = fo_amount_transport_plane_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_transport_plane_equipment > 6.5 } }
+					add_equipment_production = { equipment = { type = transport_plane_equipment_3 } requested_factories = 7 amount = fo_amount_transport_plane_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_transport_plane_equipment > 5.5 } }
+					add_equipment_production = { equipment = { type = transport_plane_equipment_3 } requested_factories = 6 amount = fo_amount_transport_plane_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_transport_plane_equipment > 4.5 } }
+					add_equipment_production = { equipment = { type = transport_plane_equipment_3 } requested_factories = 5 amount = fo_amount_transport_plane_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_transport_plane_equipment > 3.5 } }
+					add_equipment_production = { equipment = { type = transport_plane_equipment_3 } requested_factories = 4 amount = fo_amount_transport_plane_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_transport_plane_equipment > 2.5 } }
+					add_equipment_production = { equipment = { type = transport_plane_equipment_3 } requested_factories = 3 amount = fo_amount_transport_plane_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_transport_plane_equipment > 1.5 } }
+					add_equipment_production = { equipment = { type = transport_plane_equipment_3 } requested_factories = 2 amount = fo_amount_transport_plane_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_transport_plane_equipment > 0.5 } }
+					add_equipment_production = { equipment = { type = transport_plane_equipment_3 } requested_factories = 1 amount = fo_amount_transport_plane_equipment }
+				}
+			}
+			else_if = { limit = { OR = { has_tech = improved_transport_plane has_tech = bba_improved_transport_plane } }
+				if = { limit = { check_variable = { fo_share_transport_plane_equipment > 14.5 } }
+					add_equipment_production = { equipment = { type = transport_plane_equipment_2 } requested_factories = 15 amount = fo_amount_transport_plane_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_transport_plane_equipment > 13.5 } }
+					add_equipment_production = { equipment = { type = transport_plane_equipment_2 } requested_factories = 14 amount = fo_amount_transport_plane_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_transport_plane_equipment > 12.5 } }
+					add_equipment_production = { equipment = { type = transport_plane_equipment_2 } requested_factories = 13 amount = fo_amount_transport_plane_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_transport_plane_equipment > 11.5 } }
+					add_equipment_production = { equipment = { type = transport_plane_equipment_2 } requested_factories = 12 amount = fo_amount_transport_plane_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_transport_plane_equipment > 10.5 } }
+					add_equipment_production = { equipment = { type = transport_plane_equipment_2 } requested_factories = 11 amount = fo_amount_transport_plane_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_transport_plane_equipment > 9.5 } }
+					add_equipment_production = { equipment = { type = transport_plane_equipment_2 } requested_factories = 10 amount = fo_amount_transport_plane_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_transport_plane_equipment > 8.5 } }
+					add_equipment_production = { equipment = { type = transport_plane_equipment_2 } requested_factories = 9 amount = fo_amount_transport_plane_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_transport_plane_equipment > 7.5 } }
+					add_equipment_production = { equipment = { type = transport_plane_equipment_2 } requested_factories = 8 amount = fo_amount_transport_plane_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_transport_plane_equipment > 6.5 } }
+					add_equipment_production = { equipment = { type = transport_plane_equipment_2 } requested_factories = 7 amount = fo_amount_transport_plane_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_transport_plane_equipment > 5.5 } }
+					add_equipment_production = { equipment = { type = transport_plane_equipment_2 } requested_factories = 6 amount = fo_amount_transport_plane_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_transport_plane_equipment > 4.5 } }
+					add_equipment_production = { equipment = { type = transport_plane_equipment_2 } requested_factories = 5 amount = fo_amount_transport_plane_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_transport_plane_equipment > 3.5 } }
+					add_equipment_production = { equipment = { type = transport_plane_equipment_2 } requested_factories = 4 amount = fo_amount_transport_plane_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_transport_plane_equipment > 2.5 } }
+					add_equipment_production = { equipment = { type = transport_plane_equipment_2 } requested_factories = 3 amount = fo_amount_transport_plane_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_transport_plane_equipment > 1.5 } }
+					add_equipment_production = { equipment = { type = transport_plane_equipment_2 } requested_factories = 2 amount = fo_amount_transport_plane_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_transport_plane_equipment > 0.5 } }
+					add_equipment_production = { equipment = { type = transport_plane_equipment_2 } requested_factories = 1 amount = fo_amount_transport_plane_equipment }
+				}
+			}
+			else_if = { limit = { OR = { has_tech = early_transport_plane has_tech = bba_early_transport_plane } }
+				if = { limit = { check_variable = { fo_share_transport_plane_equipment > 14.5 } }
+					add_equipment_production = { equipment = { type = transport_plane_equipment_1 } requested_factories = 15 amount = fo_amount_transport_plane_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_transport_plane_equipment > 13.5 } }
+					add_equipment_production = { equipment = { type = transport_plane_equipment_1 } requested_factories = 14 amount = fo_amount_transport_plane_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_transport_plane_equipment > 12.5 } }
+					add_equipment_production = { equipment = { type = transport_plane_equipment_1 } requested_factories = 13 amount = fo_amount_transport_plane_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_transport_plane_equipment > 11.5 } }
+					add_equipment_production = { equipment = { type = transport_plane_equipment_1 } requested_factories = 12 amount = fo_amount_transport_plane_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_transport_plane_equipment > 10.5 } }
+					add_equipment_production = { equipment = { type = transport_plane_equipment_1 } requested_factories = 11 amount = fo_amount_transport_plane_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_transport_plane_equipment > 9.5 } }
+					add_equipment_production = { equipment = { type = transport_plane_equipment_1 } requested_factories = 10 amount = fo_amount_transport_plane_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_transport_plane_equipment > 8.5 } }
+					add_equipment_production = { equipment = { type = transport_plane_equipment_1 } requested_factories = 9 amount = fo_amount_transport_plane_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_transport_plane_equipment > 7.5 } }
+					add_equipment_production = { equipment = { type = transport_plane_equipment_1 } requested_factories = 8 amount = fo_amount_transport_plane_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_transport_plane_equipment > 6.5 } }
+					add_equipment_production = { equipment = { type = transport_plane_equipment_1 } requested_factories = 7 amount = fo_amount_transport_plane_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_transport_plane_equipment > 5.5 } }
+					add_equipment_production = { equipment = { type = transport_plane_equipment_1 } requested_factories = 6 amount = fo_amount_transport_plane_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_transport_plane_equipment > 4.5 } }
+					add_equipment_production = { equipment = { type = transport_plane_equipment_1 } requested_factories = 5 amount = fo_amount_transport_plane_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_transport_plane_equipment > 3.5 } }
+					add_equipment_production = { equipment = { type = transport_plane_equipment_1 } requested_factories = 4 amount = fo_amount_transport_plane_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_transport_plane_equipment > 2.5 } }
+					add_equipment_production = { equipment = { type = transport_plane_equipment_1 } requested_factories = 3 amount = fo_amount_transport_plane_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_transport_plane_equipment > 1.5 } }
+					add_equipment_production = { equipment = { type = transport_plane_equipment_1 } requested_factories = 2 amount = fo_amount_transport_plane_equipment }
+				}
+				else_if = { limit = { check_variable = { fo_share_transport_plane_equipment > 0.5 } }
+					add_equipment_production = { equipment = { type = transport_plane_equipment_1 } requested_factories = 1 amount = fo_amount_transport_plane_equipment }
+				}
+			}
+		}
+
+		set_country_flag = { flag = fo_cooldown days = 7 value = 1 }
+		set_variable = { fo_has_plan = 1 }
+	}
+	else = {
+		set_variable = { fo_has_plan = 0 }
+	}
+}

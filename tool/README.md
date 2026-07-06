@@ -72,9 +72,31 @@ See [`../docs/DESIGN.md`](../docs/DESIGN.md) for modeling notes and limitations.
 cd tool && python -m pytest -q
 ```
 
+## genmod — generate the in-game mod script
+
+`hoi4opt.genmod` reads the same game+mod data and **code-generates** the in-game
+companion mod's optimizer effect (`../mod/common/scripted_effects/...`) plus its
+localization — every equipment archetype, IC cost, and variant→tech unlock baked
+in from your actual files. This is how the in-game button stays mod-agnostic:
+change your mod list, regenerate, done.
+
+```bash
+cd tool
+python -m hoi4opt.genmod                       # base game, default paths
+python -m hoi4opt.genmod --mod "C:/.../mod/x"  # with mods (repeatable)
+```
+
+Flags: `--out DIR` (default: this repo's `mod/`), `--max-per-line N` (default 15),
+`--cooldown-days N` (default 7), `--start-efficiency N` (off by default — a free
+efficiency head start would be a cheat).
+
+Design and verified engine facts: [`../docs/INGAME_BUTTON.md`](../docs/INGAME_BUTTON.md).
+
 ## Roadmap
 - Parse a **save game** to auto-detect factories, stockpiles, in-progress lines,
   resources, and which templates are actually queued (currently supplied via
   flags). See DESIGN's open questions.
 - Model production efficiency ramp-up and variant (not just archetype) costs.
 - `replace_path` / partial-merge handling for mod overlays.
+- genmod: special-project unlock detection (helicopters etc.), smarter leftover
+  redistribution when the largest line hits the per-line cap.

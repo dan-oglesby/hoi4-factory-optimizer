@@ -1,0 +1,30 @@
+# Factory Optimizer Companion - production screen button.
+# Attachment per the game's own common/scripted_guis/_documentation.md:
+# production_tab is an officially listed parent_window_token.
+scripted_gui = {
+	fo_optimizer_ui = {
+		context_type = player_context
+		window_name = "fo_optimizer_window"
+		parent_window_token = production_tab
+
+		visible = {
+			always = yes
+		}
+
+		ai_enabled = {
+			always = no
+		}
+
+		effects = {
+			fo_optimize_button_click = {
+				fo_run_optimizer = yes
+			}
+		}
+
+		triggers = {
+			fo_optimize_button_click_enabled = {
+				NOT = { has_country_flag = fo_cooldown }
+			}
+		}
+	}
+}

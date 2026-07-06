@@ -1,0 +1,10 @@
+# Factory Optimizer Companion - decision category.
+# Serves as (a) a fallback trigger for the optimizer if the production-tab
+# button placement misbehaves on some UI scale, and (b) home for the debug
+# decisions used to empirically verify engine behavior (docs/INGAME_BUTTON.md §7).
+fo_optimizer_category = {
+	icon = generic_industry
+	priority = 100
+	allowed = { always = yes }
+	visible = { is_ai = no }
+}

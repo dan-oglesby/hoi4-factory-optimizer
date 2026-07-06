@@ -29,6 +29,14 @@ class Equipment:
     archetype: Optional[str]  # parent archetype name, if this is a variant
     build_cost_ic: Optional[float]
     resources: Dict[str, float] = field(default_factory=dict)
+    # fields used by the in-game mod generator (genmod):
+    year: Optional[float] = None
+    priority: Optional[float] = None
+    active: Optional[str] = None  # "yes" -> available without research
+    is_buildable: Optional[str] = None  # "no" -> cannot be produced directly
+    supply_truck: bool = False  # engine flag: counts as supply trucks
+    types: List[str] = field(default_factory=list)  # from `type = x` / `type = { .. }`
+    has_module_slots: bool = False  # designer equipment (tanks/planes/ships)
 
     def resolved_cost(self, table: "Dict[str, Equipment]") -> float:
         """build_cost_ic, inheriting from the archetype chain when unset."""
@@ -73,6 +81,8 @@ class GameData:
     equipment: Dict[str, Equipment]
     battalions: Dict[str, Battalion]
     templates: Dict[str, Template]
+    # equipment token -> tech ids that unlock it (via enable_equipments)
+    unlock_techs: Dict[str, List[str]] = field(default_factory=dict)
 
     def cost_of(self, equip: str) -> float:
         eq = self.equipment.get(equip)
@@ -125,13 +135,54 @@ def _load_equipment(roots: List[Path]) -> Dict[str, Equipment]:
                             resources[rk] = float(rv)
                         except ValueError:
                             pass
+            type_val = val.get("type")
+            if isinstance(type_val, Block):
+                types = type_val.scalars()
+            elif isinstance(type_val, str):
+                types = [type_val]
+            else:
+                types = []
             out[name] = Equipment(
                 name=name,
                 is_archetype=(val.get_str("is_archetype") == "yes"),
                 archetype=val.get_str("archetype"),
                 build_cost_ic=val.get_float("build_cost_ic"),
                 resources=resources,
+                year=val.get_float("year"),
+                priority=val.get_float("priority"),
+                active=val.get_str("active"),
+                is_buildable=val.get_str("is_buildable"),
+                supply_truck=(val.get_str("supply_truck") == "yes"),
+                types=types,
+                has_module_slots=(val.get("module_slots") is not None),
             )
+    return out
+
+
+def _load_technologies(roots: List[Path]) -> Dict[str, List[str]]:
+    """Map equipment token -> list of technology ids whose `enable_equipments`
+    unlock it. Read from common/technologies (base + mods, same-path replace)."""
+    out: Dict[str, List[str]] = {}
+    for path in _resolve_files(roots, "common/technologies"):
+        try:
+            root = pdxparse.parse_file(path)
+        except Exception:
+            continue
+        techs = root.get_block("technologies")
+        if techs is None:
+            continue
+        for tech_id, tval in techs.pairs():
+            if not isinstance(tval, Block):
+                continue
+            for en in tval.get_all("enable_equipments"):
+                if not isinstance(en, Block):
+                    continue
+                # equipment tokens are bare scalars; nested blocks (e.g. limit)
+                # are skipped — a DLC-limited enable still gates on has_tech.
+                for token in en.scalars():
+                    out.setdefault(token, [])
+                    if tech_id not in out[token]:
+                        out[token].append(tech_id)
     return out
 
 
@@ -206,7 +257,13 @@ def load(
     roots = [Path(game_root)] + [Path(m) for m in (mods or [])]
     equipment = _load_equipment(roots)
     battalions = _load_battalions(roots)
+    unlock_techs = _load_technologies(roots)
     templates: Dict[str, Template] = {}
     for tf in template_files or []:
         templates.update(load_templates_from_file(Path(tf)))
-    return GameData(equipment=equipment, battalions=battalions, templates=templates)
+    return GameData(
+        equipment=equipment,
+        battalions=battalions,
+        templates=templates,
+        unlock_techs=unlock_techs,
+    )
