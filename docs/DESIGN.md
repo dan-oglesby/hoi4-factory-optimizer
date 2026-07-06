@@ -27,9 +27,17 @@ limitations:
    `ai_strategy_plans`, `role_ratios`, and the production defines steer how
    **AI countries** build. They do not touch the human player's manual production.
 
-Net: the seamless "queue a division → factories auto-rebalance" experience is
-**out of scope for a Workshop mod**. Anyone claiming otherwise is either using an
-external tool or memory-editing.
+Net: the seamless *automatic* "queue a division → factories auto-rebalance"
+experience is **out of scope for a Workshop mod**. Anyone claiming otherwise is
+either using an external tool or memory-editing.
+
+> **2026-07 update — big refinement:** a *player-clicked* in-game rebalance
+> button **is feasible**. Script can read per-archetype army deficits and
+> engine-computed truck/train needs, and `add_equipment_production` can create
+> finite self-terminating lines from free factories. See
+> [`INGAME_BUTTON.md`](INGAME_BUTTON.md) for the verified design and its limits
+> (free factories only; no removal/edit of existing lines; no reading of line
+> state).
 
 ## Feasible approaches
 

@@ -79,8 +79,13 @@ hoi4-factory-optimizer/
 
 ## Status
 v0.1 — working end to end against real game data (parser, demand, balanced
-allocation, resource awareness, tests). Next: save-game parsing to auto-detect
-factories/stockpiles/queue. See [`tool/README.md`](tool/README.md#roadmap).
+allocation, resource awareness, tests).
+
+**Next up:** an in-game **"Optimize" button** on the production screen — verified
+feasible via scripted GUI + `add_equipment_production` finite lines, including
+engine-computed truck/train (logistics) needs via `get_supply_vehicles`. Design
+and evidence: [`docs/INGAME_BUTTON.md`](docs/INGAME_BUTTON.md). Also planned:
+save-game parsing to auto-detect factories/stockpiles/queue for the CLI tool.
 
 ## License
 MIT — see [`LICENSE`](LICENSE).

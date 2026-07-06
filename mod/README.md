@@ -11,12 +11,16 @@ in-game surfacing that *is* possible without breaking the honesty of the project
   changes; enabling it is a no-op, safe to leave on).
 
 ## Planned, actually-feasible additions
-- A localization/tooltip note or a purely-cosmetic decision reminding you to run
-  the optimizer after changing your training queue.
-- Optional GUI tweaks to the production screen *if* a non-intrusive hook exists.
+- **An "Optimize" button on the production screen** (scripted GUI anchored to
+  `production_tab`) that computes equipment + truck/train deficits in-game and
+  creates finite, self-terminating production lines from free factories — see
+  [`../docs/INGAME_BUTTON.md`](../docs/INGAME_BUTTON.md) for the verified design.
+  The mod's script files will be **code-generated** by the external tool
+  (`hoi4opt genmod`) from your active game+mods, preserving mod-agnosticism.
 
-Anything requiring "read the queue → compute → assign factories" stays in the
-external tool by necessity.
+What remains impossible in-game: removing/editing existing production lines,
+reading per-line factory counts, and anything fully automatic (no
+"division queued" hook exists).
 
 ## Enabling it
 Run [`../scripts/deploy-mod.ps1`](../scripts/deploy-mod.ps1) (or `deploy-mod.sh`)
