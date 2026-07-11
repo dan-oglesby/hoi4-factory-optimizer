@@ -10,6 +10,8 @@ $FO_PLAN_LINES$
 
 Excluded (design-based equipment, assign manually): §H$FO_EXCLUDED_LIST$§!
 
+Left unassigned (all needed lines at cap): §Y[?fo_unassigned|0]§!
+
 §HNote: only free factories are used. Lines you created by hand are never touched.§!"
  fo_optimizer_category:0 "Factory Optimizer"
  fo_optimizer_category_desc:0 "Optimize military factory allocation toward the divisions you want to train, including logistics (trucks/trains)."

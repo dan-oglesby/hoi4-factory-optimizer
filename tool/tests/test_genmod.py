@@ -88,8 +88,8 @@ def test_variants_sorted_best_first_with_unlocks():
 
 
 def test_generated_script_parses_and_has_key_constructs():
-    model = genmod.build_model(_toy_gamedata())
-    text = genmod.emit_scripted_effect(model, max_per_line=5, cooldown_days=3)
+    model = genmod.build_model(_toy_gamedata(), max_per_line=5)
+    text = genmod.emit_scripted_effect(model, cooldown_days=3)
     root = pdxparse.parse(text)
     fx = root.get_block("fo_run_optimizer")
     assert fx is not None
@@ -97,15 +97,18 @@ def test_generated_script_parses_and_has_key_constructs():
     # logistics: engine-computed need is queried for both vehicle types
     assert "get_supply_vehicles_temp = { var = fo_truck_need type = truck need = yes }" in text
     assert "get_supply_vehicles_temp = { var = fo_train_need type = train need = yes }" in text
-    # trucks take max(army-side, supply-side)
-    assert "value = fo_def_motorized_equipment max = fo_truck_def" in text
+    # trucks: army need + supply need are ADDITIVE on one shared stockpile
+    assert "add_to_temp_variable = { fo_def_motorized_equipment = fo_truck_need }" in text
+    assert "fo_truck_def" not in text  # old max()-based combiner is gone
+    # trains: supply-side only
+    assert "set_temp_variable = { fo_def_train_equipment = fo_train_def }" in text
     # deficit formula reads the three engine variables
     assert "num_target_equipment_in_armies@infantry_equipment" in text
     assert "num_equipment_in_armies@infantry_equipment" in text
     assert "num_equipment@infantry_equipment" in text
     # finite lines: amount is the deficit variable, factories are literals
     assert "amount = fo_amount_infantry_equipment" in text
-    assert "requested_factories = 5" in text  # ladder top == max_per_line
+    assert "requested_factories = 5" in text  # ladder top == cap
     assert "requested_factories = 1" in text  # ladder bottom
     assert "requested_factories = 6" not in text  # never above the cap
     # multi-tech unlock becomes an OR
@@ -114,16 +117,44 @@ def test_generated_script_parses_and_has_key_constructs():
     assert "set_country_flag = { flag = fo_cooldown days = 3 value = 1 }" in text
 
 
-def test_ladder_count_matches_cap_times_variants():
-    model = genmod.build_model(_toy_gamedata())
-    text = genmod.emit_scripted_effect(model, max_per_line=5)
-    # infantry: 2 variants x 5 rungs; motorized: 1 x 5; train: 1 x 5 = 20 adds
-    assert text.count("add_equipment_production") == 20
+def test_spill_pass_present_and_no_stranding_construct():
+    model = genmod.build_model(_toy_gamedata(), max_per_line=5)
+    text = genmod.emit_scripted_effect(model)
+    # the old single-line "dump remainder on max-IC line" is gone
+    assert "fo_max_idx" not in text
+    # spill machinery: headroom, best-line selection, give, unassigned report
+    assert "fo_room_infantry_equipment" in text
+    assert "fo_bidx" in text
+    assert "set_temp_variable = { fo_give = { value = fo_left min = fo_room_infantry_equipment } }" in text
+    assert "set_variable = { fo_unassigned = fo_left }" in text
+    # one full spill pass per line so nothing strands while a line has headroom
+    assert text.count("set_temp_variable = { fo_bidx = -1 }") == len(model.plans)
+
+
+def test_railway_gun_capped_at_five():
+    equipment = {
+        "railway_gun_equipment": Equipment(
+            "railway_gun_equipment", True, None, build_cost_ic=20,
+            year=1936, is_buildable="no", active="no",
+        ),
+        "railway_gun_equipment_1": Equipment(
+            "railway_gun_equipment_1", False, "railway_gun_equipment",
+            build_cost_ic=20, year=1936, priority=10,
+        ),
+    }
+    battalions = {"railway_gun": Battalion("railway_gun", need={"railway_gun_equipment": 1})}
+    gd = GameData(equipment, battalions, {}, unlock_techs={"railway_gun_equipment_1": ["railway_guns"]})
+    model = genmod.build_model(gd, max_per_line=15)
+    plan = next(p for p in model.plans if p.archetype == "railway_gun_equipment")
+    assert plan.cap == 5  # RAILWAY_GUN_MAX_MIL_FACTORIES_PER_LINE
+    text = genmod.emit_scripted_effect(model)
+    assert "requested_factories = 5" in text
+    assert "requested_factories = 6" not in text  # engine caps railway lines at 5
 
 
 def test_always_active_variant_terminates_chain_as_else():
-    model = genmod.build_model(_toy_gamedata())
-    text = genmod.emit_scripted_effect(model, max_per_line=5)
+    model = genmod.build_model(_toy_gamedata(), max_per_line=5)
+    text = genmod.emit_scripted_effect(model)
     # order chain: if has_tech -> produce _1, else -> produce _0 (fallback).
     # Search from the ordering section (the cost chain earlier also has an else).
     idx_order = text.index("set_variable = { fo_plan_infantry_equipment = fo_share_infantry_equipment }")
@@ -143,9 +174,16 @@ def test_generated_loc_lists_plans_and_exclusions():
     assert "light_tank_chassis" in loc  # excluded list
 
 
+def test_ladder_count_matches_cap_times_variants():
+    model = genmod.build_model(_toy_gamedata(), max_per_line=5)
+    text = genmod.emit_scripted_effect(model)
+    # infantry: 2 variants x 5 rungs; motorized: 1 x 5; train: 1 x 5 = 20 adds
+    assert text.count("add_equipment_production") == 20
+
+
 def test_start_efficiency_flag_optional():
-    model = genmod.build_model(_toy_gamedata())
-    fair = genmod.emit_scripted_effect(model, max_per_line=3)
+    model = genmod.build_model(_toy_gamedata(), max_per_line=3)
+    fair = genmod.emit_scripted_effect(model)
     assert "efficiency" not in fair  # default: no head start (not a cheat)
-    boosted = genmod.emit_scripted_effect(model, max_per_line=3, start_efficiency=50)
+    boosted = genmod.emit_scripted_effect(model, start_efficiency=50)
     assert "efficiency = 50" in boosted

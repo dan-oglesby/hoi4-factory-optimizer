@@ -55,6 +55,7 @@ class ArchPlan:
     variants: List[Variant]  # best (newest) first
     is_truck: bool = False
     is_train: bool = False
+    cap: int = 15  # policy cap on factories per line for this archetype
 
 
 @dataclass
@@ -66,7 +67,7 @@ class GenModel:
 # --------------------------------------------------------------------------- #
 # Model building
 # --------------------------------------------------------------------------- #
-def build_model(gd: GameData) -> GenModel:
+def build_model(gd: GameData, max_per_line: int = 15) -> GenModel:
     needed = set()
     for b in gd.battalions.values():
         needed.update(b.need.keys())
@@ -117,7 +118,18 @@ def build_model(gd: GameData) -> GenModel:
                 -(gd.equipment[v.token].priority or 0),
             )
         )
-        plans.append(ArchPlan(arch, avail, is_truck=arch in trucks, is_train=arch in trains))
+        # railway guns have a hard engine per-line cap of 5
+        # (RAILWAY_GUN_MAX_MIL_FACTORIES_PER_LINE); everything else uses the
+        # policy cap. Over-requesting past the engine cap would strand factories
+        # engine-side, so we bound the allocation to it and let the spill pass
+        # move the excess to other lines.
+        cap = min(max_per_line, 5) if "railway_gun" in arch else max_per_line
+        plans.append(
+            ArchPlan(
+                arch, avail,
+                is_truck=arch in trucks, is_train=arch in trains, cap=cap,
+            )
+        )
     return GenModel(plans=plans, excluded=excluded)
 
 
@@ -170,13 +182,13 @@ def _emit_ladder(
     out: _W,
     depth: int,
     share_var: str,
-    max_per_line: int,
+    cap: int,
     add_block: Callable[[int], str],
 ) -> None:
     """requested_factories only accepts literal integers (every vanilla usage is
     literal; not documented to accept variables), so branch on the share."""
     first = True
-    for rf in range(max_per_line, 0, -1):
+    for rf in range(cap, 0, -1):
         kw = "if" if first else "else_if"
         out.w(depth, f"{kw} = {{ limit = {{ check_variable = {{ {share_var} > {rf - 1}.5 }} }}")
         out.w(depth + 1, add_block(rf))
@@ -186,10 +198,11 @@ def _emit_ladder(
 
 def emit_scripted_effect(
     model: GenModel,
-    max_per_line: int = 15,
     cooldown_days: int = 7,
     start_efficiency: Optional[int] = None,
 ) -> str:
+    """Emit the fo_run_optimizer scripted effect. Per-line factory caps come
+    from each plan's `cap` (set in build_model)."""
     out = _W()
     out.w(0, GENERATED_HEADER.rstrip())
     out.w(0)
@@ -200,10 +213,10 @@ def emit_scripted_effect(
     out.w(d, "set_variable = { fo_last_free = fo_free }")
     out.w(d, "set_temp_variable = { fo_total_ic = 0 }")
     out.w(d)
-    out.w(d, "# engine-computed logistics need (railways, hub motorization, supply draw)")
+    out.w(d, "# engine-computed logistics need (railways, hub motorization, supply draw).")
+    out.w(d, "# 'need = yes' is the gross count the engine wants; 'have' is the stockpile.")
     out.w(d, "get_supply_vehicles_temp = { var = fo_truck_have type = truck }")
     out.w(d, "get_supply_vehicles_temp = { var = fo_truck_need type = truck need = yes }")
-    out.w(d, "set_temp_variable = { fo_truck_def = { value = fo_truck_need subtract = fo_truck_have max = 0 } }")
     out.w(d, "get_supply_vehicles_temp = { var = fo_train_have type = train }")
     out.w(d, "get_supply_vehicles_temp = { var = fo_train_need type = train need = yes }")
     out.w(d, "set_temp_variable = { fo_train_def = { value = fo_train_need subtract = fo_train_have max = 0 } }")
@@ -213,16 +226,28 @@ def emit_scripted_effect(
     for plan in model.plans:
         x = plan.archetype
         out.w(d, f"# ---- {x} ----")
-        out.w(d, f"set_temp_variable = {{ fo_def_{x} = num_target_equipment_in_armies@{x} }}")
-        out.w(d, f"subtract_from_temp_variable = {{ fo_def_{x} = num_equipment_in_armies@{x} }}")
-        out.w(d, f"subtract_from_temp_variable = {{ fo_def_{x} = num_equipment@{x} }}")
-        out.w(d, f"set_temp_variable = {{ fo_def_{x} = {{ value = fo_def_{x} max = 0 }} }}")
-        if plan.is_truck:
-            out.w(d, "# trucks: supply-system need can exceed the army-side need; take the max")
-            out.w(d, f"set_temp_variable = {{ fo_def_{x} = {{ value = fo_def_{x} max = fo_truck_def }} }}")
         if plan.is_train:
+            # Trains are never in division `need` blocks, so demand is purely
+            # supply-side (fo_train_def = max(0, engine train need - stockpile)).
             out.w(d, "# trains: demand is purely supply-side")
-            out.w(d, f"set_temp_variable = {{ fo_def_{x} = {{ value = fo_def_{x} max = fo_train_def }} }}")
+            out.w(d, f"set_temp_variable = {{ fo_def_{x} = fo_train_def }}")
+        elif plan.is_truck:
+            # Army-side and supply-side truck demand are ADDITIVE draws on the
+            # same motorized stockpile, so add them and subtract the shared
+            # stockpile once: max(0, max(0, target-in_armies) + supply_need - stock).
+            # (Using max() here would under-order when both are positive.)
+            out.w(d, "# trucks: army need and supply need are additive on one shared stockpile")
+            out.w(d, f"set_temp_variable = {{ fo_def_{x} = num_target_equipment_in_armies@{x} }}")
+            out.w(d, f"subtract_from_temp_variable = {{ fo_def_{x} = num_equipment_in_armies@{x} }}")
+            out.w(d, f"set_temp_variable = {{ fo_def_{x} = {{ value = fo_def_{x} max = 0 }} }}")
+            out.w(d, f"add_to_temp_variable = {{ fo_def_{x} = fo_truck_need }}")
+            out.w(d, f"subtract_from_temp_variable = {{ fo_def_{x} = num_equipment@{x} }}")
+            out.w(d, f"set_temp_variable = {{ fo_def_{x} = {{ value = fo_def_{x} max = 0 }} }}")
+        else:
+            out.w(d, f"set_temp_variable = {{ fo_def_{x} = num_target_equipment_in_armies@{x} }}")
+            out.w(d, f"subtract_from_temp_variable = {{ fo_def_{x} = num_equipment_in_armies@{x} }}")
+            out.w(d, f"subtract_from_temp_variable = {{ fo_def_{x} = num_equipment@{x} }}")
+            out.w(d, f"set_temp_variable = {{ fo_def_{x} = {{ value = fo_def_{x} max = 0 }} }}")
         out.w(d, f"set_temp_variable = {{ fo_def_{x} = {{ value = fo_def_{x} round = yes }} }}")
         out.w(d, f"set_temp_variable = {{ fo_cost_{x} = 0 }}")
 
@@ -236,6 +261,7 @@ def emit_scripted_effect(
 
     # ---- reset persistent report vars ---------------------------------------
     out.w(d, "# report variables (shown in the button tooltip)")
+    out.w(d, "set_variable = { fo_unassigned = 0 }")
     for plan in model.plans:
         out.w(d, f"set_variable = {{ fo_plan_{plan.archetype} = 0 }}")
         out.w(d, f"set_variable = {{ fo_amount_{plan.archetype} = 0 }}")
@@ -248,25 +274,37 @@ def emit_scripted_effect(
     out.w(d + 2, "check_variable = { fo_free > 0.5 }")
     out.w(d + 1, "}")
     dd = d + 1
-    out.w(dd, "# proportional-to-IC shares (floor), per-line cap, remainder to the")
-    out.w(dd, "# largest-demand line - same policy as the CLI advisor")
+    out.w(dd, "# Proportional-to-IC shares, floored, each clamped to its per-line cap.")
     out.w(dd, "set_temp_variable = { fo_used = 0 }")
-    out.w(dd, "set_temp_variable = { fo_max_ic = 0 }")
-    out.w(dd, "set_temp_variable = { fo_max_idx = -1 }")
-    for k, plan in enumerate(model.plans):
+    for plan in model.plans:
         x = plan.archetype
-        out.w(dd, f"set_temp_variable = {{ fo_share_{x} = {{ value = fo_ic_{x} multiply = fo_free divide = fo_total_ic subtract = 0.5 round = yes max = 0 min = {max_per_line} }} }}")
+        out.w(dd, f"set_temp_variable = {{ fo_share_{x} = {{ value = fo_ic_{x} multiply = fo_free divide = fo_total_ic subtract = 0.5 round = yes max = 0 min = {plan.cap} }} }}")
         out.w(dd, f"add_to_temp_variable = {{ fo_used = fo_share_{x} }}")
-        out.w(dd, f"if = {{ limit = {{ check_variable = {{ fo_ic_{x} > fo_max_ic }} }}")
-        out.w(dd + 1, f"set_temp_variable = {{ fo_max_ic = fo_ic_{x} }}")
-        out.w(dd + 1, f"set_temp_variable = {{ fo_max_idx = {k} }}")
-        out.w(dd, "}")
     out.w(dd, "set_temp_variable = { fo_left = { value = fo_free subtract = fo_used max = 0 } }")
-    for k, plan in enumerate(model.plans):
-        x = plan.archetype
-        out.w(dd, f"if = {{ limit = {{ check_variable = {{ fo_max_idx = {k} }} }}")
-        out.w(dd + 1, f"set_temp_variable = {{ fo_share_{x} = {{ value = fo_share_{x} add = fo_left min = {max_per_line} }} }}")
-        out.w(dd, "}")
+    out.w(dd)
+    out.w(dd, "# Spill the remainder (flooring dust + any capped overflow) onto the")
+    out.w(dd, "# highest-IC lines that still have headroom, one line filled to its cap")
+    out.w(dd, "# per pass - mirrors the CLI advisor's _apply_caps so no free factory is")
+    out.w(dd, "# stranded while another needed line has room. Passes = line count.")
+    for _p in range(len(model.plans)):
+        out.w(dd, "set_temp_variable = { fo_bmax = 0 }")
+        out.w(dd, "set_temp_variable = { fo_bidx = -1 }")
+        for k, plan in enumerate(model.plans):
+            x = plan.archetype
+            out.w(dd, f"set_temp_variable = {{ fo_room_{x} = {{ value = fo_share_{x} multiply = -1 add = {plan.cap} max = 0 }} }}")
+            out.w(dd, f"if = {{ limit = {{ check_variable = {{ fo_room_{x} > 0.5 }} check_variable = {{ fo_ic_{x} > fo_bmax }} }}")
+            out.w(dd + 1, f"set_temp_variable = {{ fo_bmax = fo_ic_{x} }}")
+            out.w(dd + 1, f"set_temp_variable = {{ fo_bidx = {k} }}")
+            out.w(dd, "}")
+        for k, plan in enumerate(model.plans):
+            x = plan.archetype
+            out.w(dd, f"if = {{ limit = {{ check_variable = {{ fo_bidx = {k} }} check_variable = {{ fo_left > 0.5 }} }}")
+            out.w(dd + 1, f"set_temp_variable = {{ fo_give = {{ value = fo_left min = fo_room_{x} }} }}")
+            out.w(dd + 1, f"add_to_temp_variable = {{ fo_share_{x} = fo_give }}")
+            out.w(dd + 1, "subtract_from_temp_variable = { fo_left = fo_give }")
+            out.w(dd, "}")
+    out.w(dd, "# whatever remains is genuinely unassignable (all needed lines capped)")
+    out.w(dd, "set_variable = { fo_unassigned = fo_left }")
     out.w(dd)
     out.w(dd, "# create finite lines: amount = deficit, so each line completes and")
     out.w(dd, "# releases its factories once the need is filled")
@@ -277,12 +315,12 @@ def emit_scripted_effect(
         out.w(dd + 1, f"set_variable = {{ fo_plan_{x} = fo_share_{x} }}")
         out.w(dd + 1, f"set_variable = {{ fo_amount_{x} = fo_def_{x} }}")
 
-        def order_body(v: Variant, depth: int, _x: str = x) -> None:
+        def order_body(v: Variant, depth: int, _x: str = x, _cap: int = plan.cap) -> None:
             _emit_ladder(
                 out,
                 depth,
                 f"fo_share_{_x}",
-                max_per_line,
+                _cap,
                 lambda rf, _v=v: (
                     f"add_equipment_production = {{ equipment = {{ type = {_v.token} }} "
                     f"requested_factories = {rf} amount = fo_amount_{_x}{eff} }}"
@@ -331,7 +369,7 @@ def generate(
     start_efficiency: Optional[int] = None,
 ) -> GenModel:
     gd = gamedata.load(game_root, mods=mods)
-    model = build_model(gd)
+    model = build_model(gd, max_per_line=max_per_line)
 
     out = Path(out_dir) if out_dir else Path(__file__).resolve().parents[2] / "mod"
     fx_path = out / "common" / "scripted_effects" / "fo_optimizer_scripted_effects.txt"
@@ -341,7 +379,6 @@ def generate(
 
     fx_text = emit_scripted_effect(
         model,
-        max_per_line=max_per_line,
         cooldown_days=cooldown_days,
         start_efficiency=start_efficiency,
     )
